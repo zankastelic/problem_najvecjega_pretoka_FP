@@ -1,2 +1,3 @@
-# problem_najvecjega_pretoka_FP
-Projekt pr FP-ju
+# Problem največjega pretoka
+## Avtorja 
+Lara Vidmar in Žan Kastelic 
