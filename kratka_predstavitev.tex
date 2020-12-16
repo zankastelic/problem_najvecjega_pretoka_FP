@@ -1,0 +1,55 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[slovene]{babel}
+\usepackage{lmodern} 
+
+\usepackage{amsmath}  
+\usepackage{amsthm}  
+\usepackage{amssymb} 
+
+\title{\textit{Problem največjega pretoka}}
+\author{Žan Kastelic, Lara Vidmar}
+\date{~december 2020}
+
+\begin{document}
+\begin{titlepage}
+ \maketitle
+
+\end{titlepage}
+
+\section{Opis problema}
+Pri problemu največjega pretoka imamo pretočno omrežje, po katerem teče tekočina. Omrežje vsebuje dve oblikovani vozlišči, $s $in $t$. Iščemo največji možen pretok med njima. Vozlišče $s$ se imenuje \textbf{izvor} in nima nobene vstopne povezave. Vozlišče $t$ pa \textbf{ponor} in nima nobene izstopne povezave.
+
+PODATKI: 
+\begin{itemize}
+\item Imamo usmerjen graf $G = (V, E)$ z v naprej oblikovanima vozliščema $s $ in $t.$ Pri tem je $V$ množica vozlišč in $E$ množica povezav v grafu.
+\item Na vsaki povezavi $(v_i, v_j) \in E$ imamo nenegativno realno število $c_{ij}$ tj. prepustnost ali kapaciteta povezave $(v_i, v_j).$ Prepustnost $c_{ij}$ lahko razširimo na vse pare vozlišč:  $c(i, j) = \begin{cases} c_{ij}, & \mbox{če }(v_i, v_j)\mbox{$ \in$ E} \\ 0, & \mbox{če }(v_i, v_j)\mbox{ $\not\in$ E} \end{cases}$
+\item Urejeno četvorko (G, s, t, c) imenujemo \textbf{pretočno omrežje.}
+\end{itemize}
+
+Pri zgornjih podatkih iščemo največji pretok, ki je preslikava $f: V \times V \rightarrow \mathbb{R}.$ $f(i,j) < 0$, pomeni tok $|f(i,j)|$ od j proti i. Pri tem mora bit zadoščeno naslednjim pogojem. 
+\begin{itemize}
+\item \textit{Ustreznost pretoka}:  $f(i, j) \le c(i, j) $ za $\forall i, j \in V$
+\item \textit{Antisimetričnost pretoka}: $f(i, j) = - f(i, j)$ za vse $i, j \in V$
+\item \textit{Kirchhoffovi zakoni}: $\sum i \in V f(i, j) = 0 $ za vse $j \in V \setminus  \left \{ s, t \right \}$ 
+\end{itemize}
+Velja $f(i, j) = - f(i,j) = 0. $
+Če je $f$ pretok, je povezava $(v_i, v_j) \in E$ \textbf{zasičena,} če velja $f(i,j) = c(i,j).$ Oziramo \textbf{nenasičena}, če je $f(i,j) < c(i,j).$ 
+
+\textbf{Velikost pretoka f} je $$|f|= \sum_{i \in V} f(i,t). $$
+
+
+\section{Načrt dela}
+
+Najinega projekta se bova lotila v programu R. Kot prvo bova implementirala algoritem za iskanje največjega pretoka v acikličnem povezanem grafu. Pomagala si  bova z Edmonds-Kamp algoritmom. Algoritem prvo poišče poti od izvora s do ponora t, z uporabo iskanja v širino, potem pa s  Ford-Falkersonovega algoritmom poišče največji pretok. Midva bova napisala algoritem, ki bo prvo izpisal vse poti, potem pa bova gledala minimum prepustnosti določene poti. Kot sva ugotovila obstaja v programu R že vgrajena funkcija za iskanje največjega pretoka tj. maxFlowFordFulkerson. Poiskušala bova primerjat algoritma in ugotoviti kateri je bolj učinkovit. 
+
+Grafe bova implementirala s pomočjo matrike sosednosti, kjer bodo prepustnosti izbrane naključno iz že v naprej podanega intervala celih števil. Če utež ne bo enaka 0, potem bo ta povezava obstajala. Za lažjo predstavo bo funkcija graf tudi narisala. 
+
+Kot drugo bova poizkušala graf implementirati s pomočjo naključnih geometrijskih grafov. Kjer bo neka povezava obstajala, če bo njena povezava manjša ali enaka od nekega števila r. Tem povezavam bova določila smer in nato še naključne uteži.
+
+Eksperimente bova delala na zgoraj definiranih grafih, ki jim bova odstarnila eno ali več vozlišč, odstranila povezave, zamenjala smer povezave. Opazovala bova kako se pretok spreminja in poiskušala iz tega dobiti kakšno lastnost oz. bova opisala opažanja. 
+
+
+
+\end{document}
