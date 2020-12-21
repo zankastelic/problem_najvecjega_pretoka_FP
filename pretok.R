@@ -195,12 +195,14 @@ pregled_v_sirino <- function(igraph,s,t){
           fifo_1$push(indeks)
           obiskani[vrednost] = TRUE
           starsi[stevec] = indeks
-        
+          stevec <- stevec +1
+          
         }
       }
     }
-      
+    
   }
+  #if (get.edge.ids(igraph, c(obiskani[length(obiskani)],t)) != 0){
   return(list(obiskani[t],starsi))
   
 }
@@ -214,7 +216,7 @@ edmonds_karp <- function(igraf, s,t){
   pretok <- 0
   #povezave <- get.edges(igraf, c(1:gsize(igraf)))
   #utezi <- E(igraf)$V3
-
+  
   while (ali_obstaja == TRUE) {
     pretok_poti <- Inf
     min_poti <- Inf # min bo sproti primerju
@@ -222,21 +224,22 @@ edmonds_karp <- function(igraf, s,t){
     starsi_drugace = starsi_drugace[-length(starsi_drugace)]
     utezi_poti <- E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)] #vren vtezi poti po tej poti k sva jo dubla 
     min_poti <- min(utezi_poti)
-    print(min_poti)
-    pretok = pretok + min_poti
+    pretok <- pretok + min_poti
     for (i in utezi_poti){
       E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)][i] <- E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)][i] - min_poti
     }
-    
-
+    igraf <- delete.edges(igraf, which(E(igraf)$V3==0))
     ali_obstaja <- pregled_v_sirino(igraf,s, t)[[1]]
-    }
-    
+    starsi <- pregled_v_sirino(igraf,s,t)[[2]]
+    starsi[1] <- 1
+    starsi[length(starsi) +1] <- t
+  }
+  
   return(pretok)
-    
+  
   
 }
-  
+
 #g <- make_ring(10) %>%
 #set_edge_attr("name", value = LETTERS[1:10])
 #edge_attr_names(g)
@@ -252,3 +255,4 @@ edmonds_karp <- function(igraf, s,t){
 # gsize(g) ---> število povezav v grafu
 # edge_attr(g) ---> uteži na povezavah
 # get.edges(g,c(1:6)) ---> matrika povezav (oèe-sin)
+#b <- pretvorba_v_igraph(generira_matriko(7,0,5))
