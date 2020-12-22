@@ -174,11 +174,10 @@ pretvorba_v_igraph <- function(matrika){
   povezave <- oceti_in_sinovi(matrika)
   utezi <- oceti_in_sinovi(matrika)[,3]
   g <- graph_from_data_frame(povezave, directed = TRUE, vertices = vozlisca) %>% set_edge_attr("label", value = utezi )
-  print(plot.igraph(g))
   return(g)
 }
 #igraph <- pretvorba_v_igraph(matrika) #vedno treba prvo preden uporabimo spodnjo funkcijo, matriko spremeniti v igraf
-pregled_v_sirino <- function(igraph,s,t){
+pregled_v_sirino_1 <- function(igraph,s,t){
   st_vrstic <- t
   starsi <- c()
   obiskani <- rep(FALSE, st_vrstic)
@@ -202,8 +201,30 @@ pregled_v_sirino <- function(igraph,s,t){
     }
     
   }
-  #if (get.edge.ids(igraph, c(obiskani[length(obiskani)],t)) != 0){
   return(list(obiskani[t],starsi))
+  
+}
+pregled_v_sirino <- function(graf, s, t){
+  starsi <- c()
+  obiskani <- rep(FALSE, t)
+  fifo_1 <- deque()
+  fifo_1$push(s)
+  obiskani[1] <- TRUE
+  stevec <- 2
+  while (fifo_1$size() > 0) {
+    u <- fifo_1$popleft()
+    sos <- neighbors(graf,u)[1]
+      utez <- E(graf)$V3[get.edge.ids(graf, c(u,sos))]
+      if ((obiskani[sos] == FALSE) & (utez > 0)){
+        print(obiskani)
+        fifo_1$push(sos)
+        obiskani[sos] = TRUE
+        starsi[stevec] = sos
+        stevec <- stevec +1
+      
+    }
+  }
+  return(list(obiskani[t], starsi)) #tuki vrže false da je pot amapak pot pa prou zraèuna 
   
 }
 
@@ -222,17 +243,23 @@ edmonds_karp <- function(igraf, s,t){
     min_poti <- Inf # min bo sproti primerju
     starsi_drugace = rep(starsi, each=2)[-1]
     starsi_drugace = starsi_drugace[-length(starsi_drugace)]
-    utezi_poti <- E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)] #vren vtezi poti po tej poti k sva jo dubla 
+    utezi_poti <- E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)]#vren vtezi poti po tej poti k sva jo dubla 
     min_poti <- min(utezi_poti)
     pretok <- pretok + min_poti
+    print(starsi_drugace)
+    print('jebemti')
+    print(utezi_poti)
     for (i in utezi_poti){
+      print(i)
       E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)][i] <- E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)][i] - min_poti
     }
+    
     igraf <- delete.edges(igraf, which(E(igraf)$V3==0))
     ali_obstaja <- pregled_v_sirino(igraf,s, t)[[1]]
     starsi <- pregled_v_sirino(igraf,s,t)[[2]]
     starsi[1] <- 1
     starsi[length(starsi) +1] <- t
+    
   }
   
   return(pretok)
