@@ -39,7 +39,10 @@ pregled_v_sirino <- function(igraph,s,t, starsi, stevec = 2 ){ # starsi so najpr
   #fifo_1$push(s) # toèka od kje naprej nej gleda 
   obiskani[1] <- TRUE # to toèko kjer zaènemo gledam nastavimo, kot obiskana
   #stevec <- 2 # števec nastavimo na 2
-  u <- s # iz kje gledamo sosede 
+  u <- s # iz kje gledamo sosede
+  if (length(neighbors(igraph, 1)) == 0){ # izvor nima veè sosedov
+    return(list(obiskani[t], u)) # ta 1 je sam da neki vrne
+  }
   for (indeks in neighbors(igraph, u)){ # zdej naprej pogledamo vse sosede 
     obiskani[indeks] = TRUE # te smo obiskal, 2,3,5
     print(indeks)}
@@ -49,14 +52,64 @@ pregled_v_sirino <- function(igraph,s,t, starsi, stevec = 2 ){ # starsi so najpr
     print("kaj ti, jst sm konèou, ti dam pot")
     pot <- starsi[2:length(starsi)]
     pot[length(pot)+1] <- t
-    return( pot )}
-    else {
-      obiskani <- obiskani[2:length(obiskani)] #prvi je itak obiskan 
-      tocka_od_katere_gledamo <- which(obiskani) + 1 
-      tocka_od_katere_gledamo <- tocka_od_katere_gledamo[1]
-      starsi[stevec] <- u
-      stevec <- stevec + 1 
-      print("sem šel else, delam rekurzijo")
-      return(pregled_v_sirino(igraph, tocka_od_katere_gledamo, t, starsi, stevec))
+    return(list(obiskani[t], pot))}
+  else {
+    obiskani <- obiskani[2:length(obiskani)] #prvi je itak obiskan 
+    tocka_od_katere_gledamo <- which(obiskani) + 1 
+    tocka_od_katere_gledamo <- tocka_od_katere_gledamo[1]
+    starsi[stevec] <- u
+    stevec <- stevec + 1 
+    print("sem šel else, delam rekurzijo")
+    return(pregled_v_sirino(igraph, tocka_od_katere_gledamo, t, starsi, stevec))
     }
 }
+
+edmonds_karp <- function(igraf){
+  s <- 1 # sej je vedno 1
+  t <- length(V(igraf))
+  vrednost_in_pot <- pregled_v_sirino(igraf,s,t,c(),2) #nova spremenljivka, da ne klièe dvakrat pregleda v širino 
+  pot_vozlisc <- vrednost_in_pot[[2]]
+  starsi <- pot_vozlisc # 
+  #starsi[1] <- 1
+  #starsi[length(starsi) +1] <- t
+  ali_obstaja <- vrednost_in_pot[[1]]
+  pretok <- 0 # pretok nastavimo na 0 
+  #povezave <- get.edges(igraf, c(1:gsize(igraf)))
+  #utezi <- E(igraf)$V3
+  while (ali_obstaja == TRUE) {
+    #pretok_poti <- Inf
+    #min_poti <- Inf # min bo sproti primerju ----> a to sploh rabva
+    starsi_drugace = rep(starsi, each=2)[-1]
+    starsi_drugace = starsi_drugace[-length(starsi_drugace)]
+    utezi_poti <- E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)]#vren vtezi poti po tej poti k sva jo dubla 
+    min_poti <- min(utezi_poti)
+    pretok <- pretok + min_poti
+    print(starsi_drugace)
+    print('šment, a dela')
+    print(utezi_poti)
+    for (i in 1:length(utezi_poti)){  # tle notri se posodobi uteži, vsaj ena na tej poti postane 0 in ni veè uporabna 
+      print(i)
+      E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)][i] <- E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)][i] - min_poti
+      E(igraf)$label[get.edge.ids(igraf,starsi_drugace)][i] <- E(igraf)$label[get.edge.ids(igraf,starsi_drugace)][i] - min_poti # zarad plota 
+    }
+    
+    igraf <- delete.edges(igraf, which(E(igraf)$V3==0)) # izbrišemo uteži, ki so enake 0, ker niso veè uporabne 
+    plot(igraf)
+    print("sem izbrisal povezave, ki ne morejo nièesar veè prepustiti")
+    print(paste0("pretok je ", pretok))
+    print("gremo gledat novo pot")
+    vrednost_in_pot <- pregled_v_sirino(igraf,s,t,c(),2)
+    ali_obstaja <- vrednost_in_pot[[1]]
+    starsi <- vrednost_in_pot[[2]]
+    #starsi[1] <- 1
+    #starsi[length(starsi) +1] <- t
+    
+  }
+  
+  return(pretok)
+  
+  
+}
+
+
+
