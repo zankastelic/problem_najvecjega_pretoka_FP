@@ -247,7 +247,7 @@ edmonds_karp <- function(igraf, s,t){
     min_poti <- min(utezi_poti)
     pretok <- pretok + min_poti
     print(starsi_drugace)
-    print('jebemti')
+    print('šment, a dela')
     print(utezi_poti)
     for (i in utezi_poti){
       print(i)
