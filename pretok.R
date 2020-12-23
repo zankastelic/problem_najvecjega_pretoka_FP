@@ -174,36 +174,11 @@ pretvorba_v_igraph <- function(matrika){
   povezave <- oceti_in_sinovi(matrika)
   utezi <- oceti_in_sinovi(matrika)[,3]
   g <- graph_from_data_frame(povezave, directed = TRUE, vertices = vozlisca) %>% set_edge_attr("label", value = utezi )
+  print(plot.igraph(g))
   return(g)
 }
 #igraph <- pretvorba_v_igraph(matrika) #vedno treba prvo preden uporabimo spodnjo funkcijo, matriko spremeniti v igraf
-pregled_v_sirino_1 <- function(igraph,s,t){
-  st_vrstic <- t
-  starsi <- c()
-  obiskani <- rep(FALSE, st_vrstic)
-  fifo_1 <- deque()
-  fifo_1$push(s)
-  obiskani[1] <- TRUE
-  stevec <- 2
-  while (fifo_1$size() > 0) {
-    u <- fifo_1$popleft() 
-    for (indeks in neighbors(igraph, u)){
-      obiskani[indeks] = TRUE # te smo obiskal, 2,3,5
-      for (vrednost in neighbors(igraph, indeks)){
-        if ((obiskani[vrednost] == FALSE) ){ #& (vrednosti > 0)
-          fifo_1$push(indeks)
-          obiskani[vrednost] = TRUE
-          starsi[stevec] = indeks
-          stevec <- stevec +1
-          
-        }
-      }
-    }
-    
-  }
-  return(list(obiskani[t],starsi))
-  
-}
+
 pregled_v_sirino <- function(graf, s, t){
   starsi <- c()
   obiskani <- rep(FALSE, t)
@@ -212,19 +187,24 @@ pregled_v_sirino <- function(graf, s, t){
   obiskani[1] <- TRUE
   stevec <- 2
   while (fifo_1$size() > 0) {
+    if (length(neighbors(graf, 1)) == 0){ # izvor nima veè sosedov
+      return(list(obiskani[t], u)) # ta 1 je sam da neki vrne
+    }
     u <- fifo_1$popleft()
-    sos <- neighbors(graf,u)[1]
+    for (sos in  neighbors(graf,u)){
       utez <- E(graf)$V3[get.edge.ids(graf, c(u,sos))]
       if ((obiskani[sos] == FALSE) & (utez > 0)){
-        print(obiskani)
         fifo_1$push(sos)
         obiskani[sos] = TRUE
         starsi[stevec] = sos
         stevec <- stevec +1
-      
+      }
+      if(obiskani[t] == TRUE){
+        return(list(obiskani[t], starsi))
+      }
     }
   }
-  return(list(obiskani[t], starsi)) #tuki vrže false da je pot amapak pot pa prou zraèuna 
+  return(list(obiskani[t], starsi))  
   
 }
 
@@ -232,25 +212,19 @@ pregled_v_sirino <- function(graf, s, t){
 edmonds_karp <- function(igraf, s,t){
   starsi <- pregled_v_sirino(igraf,s,t)[[2]]
   starsi[1] <- 1
-  starsi[length(starsi) +1] <- t
+  #starsi[length(starsi) +1] <- t
   ali_obstaja <- pregled_v_sirino(igraf,s,t)[[1]]
   pretok <- 0
   #povezave <- get.edges(igraf, c(1:gsize(igraf)))
   #utezi <- E(igraf)$V3
   
   while (ali_obstaja == TRUE) {
-    pretok_poti <- Inf
-    min_poti <- Inf # min bo sproti primerju
-    starsi_drugace = rep(starsi, each=2)[-1]
-    starsi_drugace = starsi_drugace[-length(starsi_drugace)]
+    starsi_drugace <- rep(starsi, each=2)[-1]
+    starsi_drugace <- starsi_drugace[-length(starsi_drugace)]
     utezi_poti <- E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)]#vren vtezi poti po tej poti k sva jo dubla 
     min_poti <- min(utezi_poti)
     pretok <- pretok + min_poti
-    print(starsi_drugace)
-    print('šment, a dela')
-    print(utezi_poti)
     for (i in utezi_poti){
-      print(i)
       E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)][i] <- E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)][i] - min_poti
     }
     
@@ -258,7 +232,7 @@ edmonds_karp <- function(igraf, s,t){
     ali_obstaja <- pregled_v_sirino(igraf,s, t)[[1]]
     starsi <- pregled_v_sirino(igraf,s,t)[[2]]
     starsi[1] <- 1
-    starsi[length(starsi) +1] <- t
+    #starsi[length(starsi) +1] <- t
     
   }
   
@@ -283,3 +257,6 @@ edmonds_karp <- function(igraf, s,t){
 # edge_attr(g) ---> uteži na povezavah
 # get.edges(g,c(1:6)) ---> matrika povezav (oèe-sin)
 #b <- pretvorba_v_igraph(generira_matriko(7,0,5))
+#c <- pretvorba_v_igraph(generira_matriko(5,0,10))
+#d <- pretvorba_v_igraph(generira_matriko(9,0,8))
+#get.shortes.paths(d,s,t)
