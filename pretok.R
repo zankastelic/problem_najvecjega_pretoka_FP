@@ -212,7 +212,6 @@ pregled_v_sirino <- function(graf, s, t){
 edmonds_karp <- function(igraf, s,t){
   starsi <- pregled_v_sirino(igraf,s,t)[[2]]
   starsi[1] <- 1
-  #starsi[length(starsi) +1] <- t
   ali_obstaja <- pregled_v_sirino(igraf,s,t)[[1]]
   pretok <- 0
   #povezave <- get.edges(igraf, c(1:gsize(igraf)))
