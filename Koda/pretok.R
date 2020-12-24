@@ -80,7 +80,7 @@ utezi_na_poti <- function(matrika){
   utezi_poti <- list()
   utezi <- c()
   #if (sum(matrika[1,])== 0){
-  #  stop("nimam veè izhodov")
+  #  stop("nimam veÄ izhodov")
   #}
   for (i in 1:length(poti)){
     pot <- as.vector(poti[[i]])
@@ -118,7 +118,7 @@ posodobljena_generirana_matrika <- function(a,polozaj_minimuma,minimum_na_poti, 
 }
 
 
-#iz matrike ocetje sinovi s posodobljenimi utemi naredi novo matriko
+#iz matrike ocetje sinovi s posodobljenimi uteÅ¾mi naredi novo matriko
 mat_iz_ocetje_sinovi <- function(oceti_in_sinovi){
   zozena_oce_sin <-oceti_in_sinovi[-which(rowSums(oceti_in_sinovi==0)>0),]
   zozena_oce_sin_2 <- zozena_oce_sin[,-3]
@@ -137,7 +137,7 @@ mat_iz_ocetje_sinovi <- function(oceti_in_sinovi){
   
   
 }
-#funkcija najveèjega pretoka, neuèinkovita za grafe z veè kot 7 toèkami
+#funkcija najveÄjega pretoka, neuÄinkovita za grafe z veÄ kot 7 toÄkami
 najvecji_pretok <- function(matrika){
   max_pretok <- 0
   mat_oce_sin <- oceti_in_sinovi(matrika)
@@ -145,10 +145,10 @@ najvecji_pretok <- function(matrika){
   utezi_poti <- utezi_na_poti(matrika)
   vse_mozne_poti<- vse_poti(matrika)
   stevec <- length(utezi_poti)
-  while (stevec != 0){ # dolina uteenih poti pa vseh monih poti je enaka 
+  while (stevec != 0){ # dolÅ¾ina uteÅ¾enih poti pa vseh moÅ¾nih poti je enaka 
     v <- utezi_poti[[1]] # vektor utezi na poti
     minimum_na_poti <- min(v) # minimum utezi na tej poti
-    max_pretok <- max_pretok + minimum_na_poti # pretok poveèamo za to ute
+    max_pretok <- max_pretok + minimum_na_poti # pretok poveÄamo za to uteÅ¾
     polozaj_minimuma <- which(v == minimum_na_poti)[1] # indeks na katerem mestu je minimum v utezeh 
     #mat_oce_sin <- posodobi_mat_oce_sin(mat_oce_sin, mat_oce_sin_2, minimum_na_poti,vse_mozne_poti,1)   ---> ne dela glih najbl
     matrika <- posodobljena_generirana_matrika(matrika,polozaj_minimuma,minimum_na_poti, vse_mozne_poti,1)
@@ -158,7 +158,7 @@ najvecji_pretok <- function(matrika){
     if ((sum(matrika[,ncol(matrika)]) <= 0)){
       return(max_pretok)
     }
-    utezi_poti <- utezi_na_poti(matrika)  # tle se prto pr zadnjem koraku k matriko ustav (ampak zdej k je ta IF se ne bi smel)
+    utezi_poti <- utezi_na_poti(matrika)  # tle se prtoÅ¾ pr zadnjem koraku k matriko ustav (ampak zdej k je ta IF se ne bi smel)
     vse_mozne_poti<- vse_poti(matrika)
     stevec <- length(utezi_poti)
   
@@ -168,7 +168,7 @@ najvecji_pretok <- function(matrika){
 
 
 
-#bolj uèinkovita razlièica 
+#bolj uÄinkovita razliÄica 
 pretvorba_v_igraph <- function(matrika){
   vozlisca <- 1: (nrow(matrika))
   povezave <- oceti_in_sinovi(matrika)
@@ -179,60 +179,54 @@ pretvorba_v_igraph <- function(matrika){
 }
 #igraph <- pretvorba_v_igraph(matrika) #vedno treba prvo preden uporabimo spodnjo funkcijo, matriko spremeniti v igraf
 
-pregled_v_sirino <- function(graf, s, t){
-  starsi <- c()
-  obiskani <- rep(FALSE, t)
+pregled_v_sirino <- function(graf, s, t) {
+  n <- length(V(graf))
+  starsi <- rep(NA, n)
+  obiskani <- rep(FALSE, n)
   fifo_1 <- deque()
   fifo_1$push(s)
-  obiskani[1] <- TRUE
-  stevec <- 2
+  obiskani[s] <- TRUE
   while (fifo_1$size() > 0) {
-    if (length(neighbors(graf, 1)) == 0){ # izvor nima veè sosedov
-      return(list(obiskani[t], u)) # ta 1 je sam da neki vrne
-    }
     u <- fifo_1$popleft()
-    for (sos in  neighbors(graf,u)){
+    for (sos in neighbors(graf, u)){
       utez <- E(graf)$V3[get.edge.ids(graf, c(u,sos))]
-      if ((obiskani[sos] == FALSE) & (utez > 0)){
+      if (! obiskani[sos] && utez > 0) {
         fifo_1$push(sos)
-        obiskani[sos] = TRUE
-        starsi[stevec] = sos
-        stevec <- stevec +1
-      }
-      if(obiskani[t] == TRUE){
-        return(list(obiskani[t], starsi))
+        obiskani[sos] <- TRUE
+        starsi[sos] <- u
+        if (sos == t) {
+          pot <- t
+          while (t != s) {
+            t <- starsi[t]
+            pot <- c(t, pot)
+          }
+          return(list(obstaja=TRUE, pot=pot))
+        }
       }
     }
   }
-  return(list(obiskani[t], starsi))  
+  return(list(obstaja=FALSE))
   
 }
 
 
-edmonds_karp <- function(igraf, s,t){
-  starsi <- pregled_v_sirino(igraf,s,t)[[2]]
-  starsi[1] <- 1
-  ali_obstaja <- pregled_v_sirino(igraf,s,t)[[1]]
+edmonds_karp <- function(igraf, s, t) {
+  bfs <- pregled_v_sirino(igraf, s, t)
   pretok <- 0
   #povezave <- get.edges(igraf, c(1:gsize(igraf)))
   #utezi <- E(igraf)$V3
   
-  while (ali_obstaja == TRUE) {
-    starsi_drugace <- rep(starsi, each=2)[-1]
+  while (bfs$obstaja) {
+    starsi_drugace <- rep(bfs$pot, each=2)[-1]
     starsi_drugace <- starsi_drugace[-length(starsi_drugace)]
-    utezi_poti <- E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)]#vren vtezi poti po tej poti k sva jo dubla 
+    povezave <- get.edge.ids(igraf,starsi_drugace)
+    utezi_poti <- E(igraf)$V3[povezave] #vren vtezi poti po tej poti k sva jo dubla 
     min_poti <- min(utezi_poti)
     pretok <- pretok + min_poti
-    for (i in utezi_poti){
-      E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)][i] <- E(igraf)$V3[get.edge.ids(igraf,starsi_drugace)][i] - min_poti
-    }
+    E(igraf)$V3[povezave] <- utezi_poti - min_poti
     
     igraf <- delete.edges(igraf, which(E(igraf)$V3==0))
-    ali_obstaja <- pregled_v_sirino(igraf,s, t)[[1]]
-    starsi <- pregled_v_sirino(igraf,s,t)[[2]]
-    starsi[1] <- 1
-    #starsi[length(starsi) +1] <- t
-    
+    bfs <- pregled_v_sirino(igraf, s, t)
   }
   
   return(pretok)
@@ -249,12 +243,12 @@ edmonds_karp <- function(igraf, s,t){
 #graf(a)
 #b <- pretvorba_v_igraph(a)
 # b <- b - edge("c|d") tko odstranimo povezavo
-#E(b)$V3[1] <- E(b)$V3[1] -2 #tko zbrišeš ute 
+#E(b)$V3[1] <- E(b)$V3[1] -2 #tko zbriÅ¡eÅ¡ uteÅ¾ 
 # E(b)$V3
 #E(b)$V3[get.edge.ids(b, c(1,2,2,5))] dobimo vektor utezi pozi
-# gsize(g) ---> število povezav v grafu
-# edge_attr(g) ---> utei na povezavah
-# get.edges(g,c(1:6)) ---> matrika povezav (oèe-sin)
+# gsize(g) ---> Å¡tevilo povezav v grafu
+# edge_attr(g) ---> uteÅ¾i na povezavah
+# get.edges(g,c(1:6)) ---> matrika povezav (oÄe-sin)
 #b <- pretvorba_v_igraph(generira_matriko(7,0,5))
 #c <- pretvorba_v_igraph(generira_matriko(5,0,10))
 #d <- pretvorba_v_igraph(generira_matriko(9,0,8))
