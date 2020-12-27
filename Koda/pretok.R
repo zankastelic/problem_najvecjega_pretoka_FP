@@ -166,8 +166,6 @@ najvecji_pretok <- function(matrika){
 }
 
 
-
-
 #bolj uÄinkovita razliÄica 
 pretvorba_v_igraph <- function(matrika){
   vozlisca <- 1: (nrow(matrika))
@@ -224,7 +222,6 @@ edmonds_karp <- function(igraf, s, t) {
     min_poti <- min(utezi_poti)
     pretok <- pretok + min_poti
     E(igraf)$V3[povezave] <- utezi_poti - min_poti
-    
     igraf <- delete.edges(igraf, which(E(igraf)$V3==0))
     bfs <- pregled_v_sirino(igraf, s, t)
   }
@@ -253,3 +250,37 @@ edmonds_karp <- function(igraf, s, t) {
 #c <- pretvorba_v_igraph(generira_matriko(5,0,10))
 #d <- pretvorba_v_igraph(generira_matriko(9,0,8))
 #get.shortes.paths(d,s,t)
+
+
+
+#GEOMETRIJSKI GRAFI 
+#1) èe ima geometrijski graf take utezi kot je razdalja 
+izracunaj_razdaljo <- function(x, y, matrika){ 
+  razdalja <- 0 # zaèetno razdaljo nastavimo na 0 
+  for(i in 1:(length(x)-1)){
+    for (j in 2:length(x)) {
+      if (j>i){
+        matrika [i,j] <- sqrt((x[j]-x[i])^2 +(y[j]-y[i])^2); 
+      }
+    }
+  }
+  matrika
+}
+
+igraf_razdalje_so_utezi <- function(st_tock,r){ #tuki dobimo matriko = matrika razdalj
+  x <- runif(st_tock); # absica
+  y <- runif(st_tock); # ordinata
+  nicelna_matrika <- matrix(0,st_tock,st_tock); 
+  matrika <- izracunaj_razdaljo(x,y,nicelna_matrika)
+  for (i in 1:nrow(matrika)){
+    for (j in 1: ncol(matrika)){
+      if (matrika[i,j] < 0){
+        matrika[i,j] <- 0
+      }
+      if ( matrika[i,j] > r){
+        matrika[i,j] <- 0
+      }
+    }
+  }
+  return(pretvorba_v_igraph(matrika))
+}
