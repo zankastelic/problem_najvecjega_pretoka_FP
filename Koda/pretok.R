@@ -259,9 +259,10 @@ izracunaj_razdaljo <- function(x, y, matrika){
   razdalja <- 0 # zaèetno razdaljo nastavimo na 0 
   for(i in 1:(length(x)-1)){
     for (j in 2:length(x)) {
-      if (j>i){
-        matrika [i,j] <- sqrt((x[j]-x[i])^2 +(y[j]-y[i])^2); 
-      }
+      #if (j>i){
+        matrika [i,j] <- round(sqrt((x[j]-x[i])^2 +(y[j]-y[i])^2), digits = 2); 
+        
+      #}
     }
   }
   matrika
@@ -283,4 +284,25 @@ igraf_razdalje_so_utezi <- function(st_tock,r){ #tuki dobimo matriko = matrika r
     }
   }
   return(pretvorba_v_igraph(matrika))
+}
+
+#2) utez je inverz povezave (se pravi bližje sta toèki, veèja je utež)
+
+igraf_razdalje_so_inverz <- function(st_tock, r){
+  graf <- igraf_razdalje_so_utezi(st_tock, r)
+  E(graf)$V3 <- 1/E(graf)$V3
+  E(graf)$label <- 1/E(graf)$label
+  print(plot.igraph(graf))
+  return(graf)
+} 
+
+#3) utezi so na povezavah nakljuèno izbrane 
+
+igraf_utezi_so_nakljucne <- function(st_tock, r,max_stevilo){
+  graf <- igraf_razdalje_so_utezi(st_tock, r)
+  t <- sample(1:max_stevilo, length(E(graf)$V3), replace=TRUE)
+  E(graf)$V3 <-t
+  E(graf)$label <- t
+  print(plot.igraph(graf))
+  return(graf)
 }
