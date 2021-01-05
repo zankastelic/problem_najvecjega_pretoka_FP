@@ -283,6 +283,7 @@ najblizja_tocka_izhodisca <- function(x,y){
   return(na_katerem_mestu_se_nahaja)
 }
 
+
 najbolj_oddaljena_tocka_izhodisca <- function(x,y){
   najvecja_razdalja <- 0 # najveèja je lah koren z 2 
   na_katerem_mestu_se_nahaja <- 0 
@@ -302,6 +303,24 @@ najbolj_oddaljena_tocka_izhodisca <- function(x,y){
 igraf_razdalje_so_utezi <- function(st_tock,r){ #tuki dobimo matriko = matrika razdalj
   x <- runif(st_tock); # absica
   y <- runif(st_tock); # ordinata
+  najblizja <- najblizja_tocka_izhodisca(x,y)
+  a <- x[najblizja]
+  x <- x[ x != a ]
+  x <- rev(x)
+  x <- append(x, a)
+  x <- rev(x)
+  a <- y[najblizja]
+  y <- y[ y != a ]
+  y <- rev(y)
+  y <- append(y, a)
+  y <- rev(y)
+  najbolj_oddaljena <- najbolj_oddaljena_tocka_izhodisca(x,y)
+  b <- x[najbolj_oddaljena]
+  x <- x[ x != b ]
+  x <- append(x, b)
+  b <- y[najbolj_oddaljena]
+  y <- y[ y != b ]
+  y <- append(y, b)
   nicelna_matrika <- matrix(0,st_tock,st_tock); 
   matrika <- izracunaj_razdaljo(x,y,nicelna_matrika)
   for (i in 1:nrow(matrika)){
