@@ -57,7 +57,7 @@ oceti_in_sinovi <- function(matrika){
     }
   }
   matrika_oce_sin<- matrika_oce_sin[apply(matrika_oce_sin, 1, function(x) !all(x==0)),] #odstrani vrstice kjer so ničle 
-  return(matrika_oce_sin)
+  return(matrix(matrika_oce_sin, ncol=3)) # dodano
 }
 
 vse_poti <- function(matrika){
@@ -276,23 +276,11 @@ igraf_razdalje_so_utezi <- function(st_tock,r){ #tuki dobimo matriko = matrika r
   x <- runif(st_tock); # absica
   y <- runif(st_tock); # ordinata
   najblizja <- najblizja_tocka_izhodisca(x,y)
-  a <- x[najblizja]
-  x <- x[ x != a ]
-  x <- rev(x)
-  x <- append(x, a)
-  x <- rev(x)
-  a <- y[najblizja]
-  y <- y[ y != a ]
-  y <- rev(y)
-  y <- append(y, a)
-  y <- rev(y)
+  x <- c(x[najblizja], x[-najblizja]) # dodano
+  y <- c(y[najblizja], y[-najblizja]) # dodano
   najbolj_oddaljena <- najbolj_oddaljena_tocka_izhodisca(x,y)
-  b <- x[najbolj_oddaljena]
-  x <- x[ x != b ]
-  x <- append(x, b)
-  b <- y[najbolj_oddaljena]
-  y <- y[ y != b ]
-  y <- append(y, b)
+  x <- c(x[-najbolj_oddaljena], x[najbolj_oddaljena]) # dodano
+  y <- c(y[-najbolj_oddaljena], y[najbolj_oddaljena]) # dodano
   nicelna_matrika <- matrix(0,st_tock,st_tock); 
   matrika <- izracunaj_razdaljo(x,y,nicelna_matrika)
   for (i in 1:nrow(matrika)){
