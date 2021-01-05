@@ -96,16 +96,6 @@ utezi_na_poti <- function(matrika){
 }
 
 
-posodobi_mat_oce_sin <- function(mat_oce_sin, mat_oce_sin_2, minimum_na_poti,vse_mozne_poti,i){
-  v <- as.vector(vse_mozne_poti[[i]])
-  for (k in 2:length(v)){
-    zac_p <- v[k-1]
-    kon_p <- v[k]
-    st_vrstice <-row.match(c(zac_p,kon_p), mat_oce_sin_2)
-    mat_oce_sin[st_vrstice,3] <- mat_oce_sin[st_vrstice,3] - minimum_na_poti
-  }
-  return(mat_oce_sin)
-}
 
 posodobljena_generirana_matrika <- function(a,polozaj_minimuma,minimum_na_poti, vse_mozne_poti,i){
   izbrana_pot <- as.vector(vse_mozne_poti[[i]])
@@ -118,25 +108,7 @@ posodobljena_generirana_matrika <- function(a,polozaj_minimuma,minimum_na_poti, 
 }
 
 
-#iz matrike ocetje sinovi s posodobljenimi utežmi naredi novo matriko
-mat_iz_ocetje_sinovi <- function(oceti_in_sinovi){
-  zozena_oce_sin <-oceti_in_sinovi[-which(rowSums(oceti_in_sinovi==0)>0),]
-  zozena_oce_sin_2 <- zozena_oce_sin[,-3]
-  st_tock <-max(max(zozena_oce_sin_2))
-  nova_gen_mat <- matrix(0, st_tock, st_tock)
-  for (i in zozena_oce_sin[,1]){
-    for (j in zozena_oce_sin[,2]){
-      vrstica <- row.match(c(i,j), zozena_oce_sin_2)
-      if (is.na(vrstica) == FALSE){
-        dodani_element <- zozena_oce_sin[vrstica,3]
-        nova_gen_mat[i,j] <- dodani_element
-      }
-    }
-  }
-  return(nova_gen_mat)  
-  
-  
-}
+
 #funkcija največjega pretoka, neučinkovita za grafe z več kot 7 točkami
 najvecji_pretok <- function(matrika){
   max_pretok <- 0
