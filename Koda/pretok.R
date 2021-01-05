@@ -56,7 +56,7 @@ oceti_in_sinovi <- function(matrika){
       }
     }
   }
-  matrika_oce_sin<- matrika_oce_sin[apply(matrika_oce_sin[,-1], 1, function(x) !all(x==0)),] #odstrani vrstice kjer so ničle 
+  matrika_oce_sin<- matrika_oce_sin[apply(matrika_oce_sin, 1, function(x) !all(x==0)),] #odstrani vrstice kjer so ničle 
   return(matrika_oce_sin)
 }
 

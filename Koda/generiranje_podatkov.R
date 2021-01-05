@@ -47,7 +47,7 @@ alg_iste_utezi <- function(st_tock, max_utez){
   
 }
 tabela_2 <- alg_iste_utezi(5,20)
-#ggplot(as.data.frame.matrix(tabela_2))??? 
+#ggplot(tabela_2, x= 'st_tock')????
 
 
 #b) utezi povezav so iz intervala [a,b]  a < b, in odstranjujemo povezave 
@@ -82,7 +82,7 @@ tabela_odstrani_minpov <- function(max_st_tock,a,b){
     
   }
   tab_odstrani_min <- cbind('stevilo tock' = c(4:max_st_tock), tab_odstrani_min)
-  colnames(tab_odstrani_min)[2:dolzina] <- c(1:(dolzina-1))
+  colnames(tab_odstrani_min)[2:dolzina] <- c(0:(dolzina-2))
   return(tab_odstrani_min)
 }
 #primer 
@@ -149,11 +149,58 @@ tabela_odstrani_tocke <- function(max_tock, a, b){
     pretoki <- c()
     pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
   }
+  tab_odstrani_oglisce <- cbind('stevilo tock' = c(4:max_tock), tab_odstrani_oglisce)
+  dim <- dim(tab_odstrani_oglisce)[2]
+  colnames(tab_odstrani_oglisce)[2:dim] <- c(0:(dim -2))
   return(tab_odstrani_oglisce)
 }
 
 
 
-#2) generiramo s pomoÄjo geometrijskih grafov 
+#2) generiramo s pomoÄjo geometrijskih grafov
+#a) èe ima geometrijski graf take utezi kot je razdalja
+
+tabela_odstrani_tocke_geom <- function(g, r, tip){ #tip = 1, èe  igraf_razdalje_so_utezi, tip = 2 èe igraf_razdalje_so_inverz
+  #tip = 3 èe igraf_utezi_so_nakljucne
+  st_tock <- length(V(g))
+  max_tock <- length(V(g))
+  pretoki <- c()
+  pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
+  tab_odstrani_oglisce <- data.frame()
+  dolzina <- 0
+  while (st_tock > 3) {
+    for (i in 1: (st_tock-2)){
+      k <- sample(2:(st_tock-1), size = i, replace=FALSE)
+      h <- delete.vertices(g,k)
+      pretoki <- append(pretoki, edmonds_karp(h,1,st_tock-i))
+      
+    }
+    pretoki <- append(pretoki, rep(0,dolzina))
+    tab_odstrani_oglisce <- rbind(tab_odstrani_oglisce, pretoki)
+    st_tock <- st_tock -1 
+    dolzina <- dolzina +1
+    if (tip == 1){
+      g <- igraf_razdalje_so_utezi(st_tock,r)
+    }else if (tip == 2){
+      igraf_razdalje_so_inverz(st_tock,r)
+    }else if (tip == 3){
+      igraf_utezi_so_nakljucne(st_tock,r,20) # boljšeeee!!!!!
+    }else{
+      return('napacen ukaz')
+    }
+    
+    pretoki <- c()
+    pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
+  }
+  tab_odstrani_oglisce <- cbind('stevilo tock' = c(4:max_tock), tab_odstrani_oglisce)
+  dim <- dim(tab_odstrani_oglisce)[2]
+  colnames(tab_odstrani_oglisce)[2:dim] <- c(0:(dim -2))
+  return(tab_odstrani_oglisce)
+}
+#b) utez je inverz povezave (se pravi bližje sta toèki, veèja je utež)
+
+
+
+#c) utezi so na povezavah nakljuèno izbrane 
 
 
