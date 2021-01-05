@@ -268,6 +268,37 @@ izracunaj_razdaljo <- function(x, y, matrika){
   matrika
 }
 
+najblizja_tocka_izhodisca <- function(x,y){
+  najmanjsa_razdalja <- 2 # najveèja je lah koren z 2 
+  na_katerem_mestu_se_nahaja <- 0 
+  for (i in 1:length(x)){
+    razdalja_od_izhodisca <- sqrt((x[i]-0)^2 +(y[i]-0)^2)
+    if (razdalja_od_izhodisca < najmanjsa_razdalja){
+      najmanjsa_razdalja <- razdalja_od_izhodisca
+      na_katerem_mestu_se_nahaja <- i
+    } else {
+      na_katerem_mestu_se_nahaja <- na_katerem_mestu_se_nahaja + 0
+    }
+  }
+  return(na_katerem_mestu_se_nahaja)
+}
+
+najbolj_oddaljena_tocka_izhodisca <- function(x,y){
+  najvecja_razdalja <- 0 # najveèja je lah koren z 2 
+  na_katerem_mestu_se_nahaja <- 0 
+  for (i in 1:length(x)){
+    razdalja_od_izhodisca <- sqrt((x[i]-0)^2 +(y[i]-0)^2)
+    if (razdalja_od_izhodisca > najvecja_razdalja){
+      najvecja_razdalja <- razdalja_od_izhodisca
+      na_katerem_mestu_se_nahaja <- i
+    } else {
+      na_katerem_mestu_se_nahaja <- na_katerem_mestu_se_nahaja + 0
+    }
+  }
+  return(na_katerem_mestu_se_nahaja)
+}
+
+
 igraf_razdalje_so_utezi <- function(st_tock,r){ #tuki dobimo matriko = matrika razdalj
   x <- runif(st_tock); # absica
   y <- runif(st_tock); # ordinata
