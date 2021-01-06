@@ -82,7 +82,7 @@ tabela_odstrani_minpov <- function(max_st_tock,a,b){
     
   }
   tab_odstrani_min <- cbind('stevilo tock' = c(4:max_st_tock), tab_odstrani_min)
-  colnames(tab_odstrani_min)[2:dolzina] <- c(0:(dolzina-2))
+  colnames(tab_odstrani_min)[2:(dolzina+1)] <- c(0:(dolzina-1))
   return(tab_odstrani_min)
 }
 #primer 
@@ -100,7 +100,7 @@ tabela_odstarni_maxpov <- function(max_st_tock,a,b){
   while (st_tock > 3) {
     while (pretoki[length(pretoki)] != 0 ) {
       max <- max(E(g)$V3)
-      mesto <- which(E(g)$V3== min)[1]
+      mesto <- which(E(g)$V3== max)[1]
       g <- delete.edges(g,E(g)[mesto])
       pretoki <- append(pretoki, edmonds_karp(g, 1, st_tock))
     }
@@ -119,7 +119,7 @@ tabela_odstarni_maxpov <- function(max_st_tock,a,b){
     
   }
   tab_odstrani_max <- cbind('stevilo tock' = c(4:max_st_tock), tab_odstrani_max)
-  colnames(tab_odstrani_max)[2:dolzina] <- c(1:(dolzina-1))
+  colnames(tab_odstrani_max)[2:(dolzina+1)] <- c(1:(dolzina))
   return(tab_odstrani_max)
 }
 
@@ -151,19 +151,20 @@ tabela_odstrani_tocke <- function(max_tock, a, b){
   }
   tab_odstrani_oglisce <- cbind('stevilo tock' = c(4:max_tock), tab_odstrani_oglisce)
   dim <- dim(tab_odstrani_oglisce)[2]
-  colnames(tab_odstrani_oglisce)[2:dim] <- c(0:(dim -2))
+  colnames(tab_odstrani_oglisce)[2:(dim+1)] <- c(0:(dim -1))
   return(tab_odstrani_oglisce)
 }
 
 
 
-#2) generiramo s pomoÄjo geometrijskih grafov
-#a) èe ima geometrijski graf take utezi kot je razdalja
+#2) generiramo s pomoÄjo geometrijskih grafov vse 3 razlicne utezi so v eni funkciji, locimo jih glede na tip
+
+#a) odtsranimo razlicno stevilo tock
 
 tabela_odstrani_tocke_geom <- function(g, r, tip){ #tip = 1, èe  igraf_razdalje_so_utezi, tip = 2 èe igraf_razdalje_so_inverz
   #tip = 3 èe igraf_utezi_so_nakljucne
-  st_tock <- length(V(g))
   max_tock <- length(V(g))
+  st_tock <- max_tock
   pretoki <- c()
   pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
   tab_odstrani_oglisce <- data.frame()
@@ -194,13 +195,158 @@ tabela_odstrani_tocke_geom <- function(g, r, tip){ #tip = 1, èe  igraf_razdalje_
   }
   tab_odstrani_oglisce <- cbind('stevilo tock' = c(4:max_tock), tab_odstrani_oglisce)
   dim <- dim(tab_odstrani_oglisce)[2]
-  colnames(tab_odstrani_oglisce)[2:dim] <- c(0:(dim -2))
+  colnames(tab_odstrani_oglisce)[2:(dim+1)] <- c(0:(dim -1))
   return(tab_odstrani_oglisce)
 }
-#b) utez je inverz povezave (se pravi bližje sta toèki, veèja je utež)
+
+#b) odstrnimo minimalno povezavo
+tabela_odstrani_minpov_geom <- function(g, r, tip){
+  max_tock <- length(V(g))
+  st_tock <- max_tock
+  pretoki <- c()
+  pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
+  tab_odstrani_min <- data.frame()
+  dolzina <- 0
+  while (st_tock > 3) {
+    while (pretoki[length(pretoki)] != 0 ) {
+      min <- min(E(g)$V3)
+      mesto <- which(E(g)$V3== min)[1]
+      g <- delete.edges(g,E(g)[mesto])
+      pretoki <- append(pretoki, edmonds_karp(g, 1, st_tock))
+    }
+    if (length(pretoki) > dolzina){
+      dolzina <- length(pretoki)
+      
+    }else {
+      u <- length(pretoki)
+      pretoki <- c(pretoki, rep(0, dolzina - u))}
+    tab_odstrani_min <- rbind(tab_odstrani_min, pretoki)
+    dolzina <- dim(tab_odstrani_min)[2]
+    st_tock <- st_tock - 1
+    if (tip == 1){
+      g <- igraf_razdalje_so_utezi(st_tock,r)
+    }else if (tip == 2){
+      igraf_razdalje_so_inverz(st_tock,r)
+    }else if (tip == 3){
+      igraf_utezi_so_nakljucne(st_tock,r,20) # boljšeeee!!!!!
+    }else{
+      return('napacen ukaz')
+    }
+    
+    pretoki <- c()
+    pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
+    
+  }
+  tab_odstrani_min <- cbind('stevilo tock' = c(4:max_tock), tab_odstrani_min)
+  colnames(tab_odstrani_min)[2:(dolzina+1)] <- c(0:(dolzina-1))
+  return(tab_odstrani_min)
+}
 
 
+# primer 
+#g<- igraf_razdalje_so_inverz(6,1)
+#h <- igraf_razdalje_so_utezi(6,1)
+#i <- igraf_utezi_so_nakljucne(6,1,20)
 
-#c) utezi so na povezavah nakljuèno izbrane 
+#c) odtsranimo maksimalno povezavo 
+tabela_odstrani_maxpov_geom <- function(g, r, tip){
+  max_tock <- length(V(g))
+  st_tock <- max_tock
+  pretoki <- c()
+  pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
+  tab_odstrani_max <- data.frame()
+  dolzina <- 0
+  while (st_tock > 3) {
+    while (pretoki[length(pretoki)] != 0 ) {
+      max <- max(E(g)$V3)
+      mesto <- which(E(g)$V3== max)[1]
+      g <- delete.edges(g,E(g)[mesto])
+      pretoki <- append(pretoki, edmonds_karp(g, 1, st_tock))
+    }
+    if (length(pretoki) > dolzina){
+      dolzina <- length(pretoki)
+      
+    }else {
+      u <- length(pretoki)
+      pretoki <- c(pretoki, rep(0, dolzina - u))}
+    tab_odstrani_max <- rbind(tab_odstrani_max, pretoki)
+    dolzina <- dim(tab_odstrani_max)[2]
+    st_tock <- st_tock - 1
+    if (tip == 1){
+      g <- igraf_razdalje_so_utezi(st_tock,r)
+    }else if (tip == 2){
+      igraf_razdalje_so_inverz(st_tock,r)
+    }else if (tip == 3){
+      igraf_utezi_so_nakljucne(st_tock,r,20) # boljšeeee!!!!!
+    }else{
+      return('napacen ukaz')
+    }
+    
+    pretoki <- c()
+    pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
+    
+  }
+  tab_odstrani_max <- cbind('stevilo tock' = c(4:max_tock), tab_odstrani_max)
+  colnames(tab_odstrani_max)[2:(dolzina +1)] <- c(0:(dolzina-1))
+  return(tab_odstrani_max)
+}
 
+#d) kakšen je pretok ob spreminjanju r-ja 
+#igraf_razdalje_so_utezi --> tip 1
+tabela_sprem_r_tip1 <- function(max_st_tock){
+  nabor <- seq(0.1,sqrt(2), 0.1)
+  d <- length(nabor)
+  tab_r <- data.frame()
+  pretok <- c()
+  for (i in 3:max_st_tock){
+    for (j in nabor){
+      g <- igraf_razdalje_so_utezi(i,j)
+      pretok <- append(pretok, edmonds_karp(g,1,i))
+    }
+    tab_r <-rbind(tab_r, pretok)
+    pretok <- c()
+  }
+  tab_r <- cbind('stevilo tock' = c(3:max_st_tock), tab_r)
+  colnames(tab_r)[2:(d+1)] <- c(nabor)
+  return(tab_r)
+}
 
+#igraf_razdalje_so_inverz ---> tip 2 
+
+tabela_sprem_r_tip2 <- function(max_st_tock){
+  nabor <- seq(0.1,sqrt(2), 0.1)
+  d <- length(nabor)
+  tab_r <- data.frame()
+  pretok <- c()
+  for (i in 3:max_st_tock){
+    for (j in nabor){
+      g <- igraf_razdalje_so_inverz(i,j)
+      pretok <- append(pretok, edmonds_karp(g,1,i))
+    }
+    tab_r <-rbind(tab_r, pretok)
+    pretok <- c()
+  }
+  tab_r <- cbind('stevilo tock' = c(3:max_st_tock), tab_r)
+  colnames(tab_r)[2:(d+1)] <- c(nabor)
+  return(tab_r)
+}
+
+#igraf_utezi_so_nakljucne ---> tip 3 
+
+tabela_sprem_r_tip3 <- function(max_st_tock){
+  nabor <- seq(0.1,sqrt(2), 0.1)
+  d <- length(nabor)
+  tab_r <- data.frame()
+  pretok <- c()
+  for (i in 3:max_st_tock){
+    for (j in nabor){
+      g <- igraf_utezi_so_nakljucne(i,j)
+      pretok <- append(pretok, edmonds_karp(g,1,i))
+    }
+    tab_r <-rbind(tab_r, pretok)
+    pretok <- c()
+  }
+  tab_r <- cbind('stevilo tock' = c(3:max_st_tock), tab_r)
+  colnames(tab_r)[2:(d+1)] <- c(nabor)
+  return(tab_r)
+}

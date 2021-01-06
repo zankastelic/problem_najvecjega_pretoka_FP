@@ -20,7 +20,7 @@ generira_matriko <- function(st_tock, min_stevil = 0, max_stevil){  # tuki mora 
 #iz matrike zgeneriramo graf 
 graf <- function(matrika){
   a <- matrika
-  st_tock <- sqrt(length(a))
+  st_tock <- nrow(matrika)
   vek_povezav <- c()
   vek_utezi <- c()
   for (i in 1:(st_tock-1)){ # zadnja vrstica je itak 0 pa jo lah spustimo 
@@ -41,7 +41,7 @@ graf <- function(matrika){
 oceti_in_sinovi <- function(matrika){
   zacetna_tocka <- 1
   # sinovi <- list()
-  koncna_tocka <- sqrt(length(matrika))
+  koncna_tocka <- nrow(matrika)
   stevilo_vrstic <- koncna_tocka - 1 + (koncna_tocka - 2)*(koncna_tocka-2)
   matrika_oce_sin <- matrix(0,stevilo_vrstic,3)
   vrstica <- 1
@@ -72,7 +72,7 @@ vse_poti <- function(matrika){
   
 
 utezi_na_poti <- function(matrika){
-  st_tock <- sqrt(length(matrika))
+  st_tock <- nrow(matrika)
   poti <- vse_poti(matrika)
   mat_oce_sin <- oceti_in_sinovi(matrika)
   mat_oce_sin_2 <- as.data.frame(mat_oce_sin[, -3])
@@ -142,7 +142,7 @@ najvecji_pretok <- function(matrika){
 pretvorba_v_igraph <- function(matrika){
   vozlisca <- 1: (nrow(matrika))
   povezave <- oceti_in_sinovi(matrika)
-  utezi <- oceti_in_sinovi(matrika)[,3]
+  utezi <- povezave[,3]
   g <- graph_from_data_frame(povezave, directed = TRUE, vertices = vozlisca) %>% set_edge_attr("label", value = utezi )
   print(plot.igraph(g))
   return(g)
