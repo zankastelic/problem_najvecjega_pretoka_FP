@@ -1,5 +1,6 @@
 #generianje podatkov in predstava v tabeli 
 library(ggplot2)
+library(reshape2)
 
 
 #1) gledamo navadane grafe,ki jih generirava s pomoÄjo matrike 
@@ -15,16 +16,19 @@ tabela_istih_utezi <- function(max_st_tock, max_utez){ #ta funkcija naredi tabel
       pretoki <- append(pretoki, izracun)
       
     }
-    tabela_1 = cbind(tabela_1, 'utez' =  pretoki)
+    tabela_1 = cbind(tabela_1, pretoki)
     pretoki <- c()
     
   
   }
+  colnames(tabela_1)[2:(max_utez+1)] <- c(1:(max_utez))
   return(tabela_1)
 }
 
 #primerÄek za zgornjo funkcijo 
-#tabela <- tabela_istih_utezi(5,5) 
+tabela <- tabela_istih_utezi(5,5)
+t <- data.frame(t(tabela[-1]))
+ggplot(tabela, aes('st_tock', '2')) + geom_point()
 
 
 #opazimo nek algoritem 
@@ -333,14 +337,14 @@ tabela_sprem_r_tip2 <- function(max_st_tock){
 
 #igraf_utezi_so_nakljucne ---> tip 3 
 
-tabela_sprem_r_tip3 <- function(max_st_tock){
+tabela_sprem_r_tip3 <- function(max_st_tock, max_utez){
   nabor <- seq(0.1,sqrt(2), 0.1)
   d <- length(nabor)
   tab_r <- data.frame()
   pretok <- c()
   for (i in 3:max_st_tock){
     for (j in nabor){
-      g <- igraf_utezi_so_nakljucne(i,j)
+      g <- igraf_utezi_so_nakljucne(i,j,max_utez)
       pretok <- append(pretok, edmonds_karp(g,1,i))
     }
     tab_r <-rbind(tab_r, pretok)
@@ -350,3 +354,12 @@ tabela_sprem_r_tip3 <- function(max_st_tock){
   colnames(tab_r)[2:(d+1)] <- c(nabor)
   return(tab_r)
 }
+
+
+#3) merjenje hitrosti funkcije ki izraèuna pretok v primerjavi z e ugrajeno funkcijo. 
+system.time(edmonds_karp(igraf_razdalje_so_utezi(6,1),1,6)) #primer 
+#elapsed je koliko èasa preteèe da izraèuna funkcijo. 
+
+#ze ugrajene funkcije za pretok 
+#max_flow(graph, source, target, capacity = NULL)
+#maxFlowFordFulkerson(nodes, arcs, directed = FALSE, source.node = 1, sink.node = nodes[length(nodes)])
