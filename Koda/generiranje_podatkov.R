@@ -132,6 +132,7 @@ tabela_odstrani_minpov <- function(max_st_tock,a,b){
   colnames(tab_odstrani_min)[2:(dolzina+1)] <- c(0:(dolzina-1))
   return(tab_odstrani_min)
 }
+
 #primer 
 #mini <-tabela_odstrani_minpov(10,0,20)
 test_tabela_odstrani_minpov <- function(max_st_tock,a,b){
@@ -439,6 +440,7 @@ tabela_odstrani_maxpov_geom <- function(g, r, tip){
 
 #d) kak?en je pretok ob spreminjanju r-ja 
 #igraf_razdalje_so_utezi --> tip 1
+
 tabela_sprem_r_tip1 <- function(max_st_tock){
   nabor <- seq(0.1,sqrt(2), 0.1)
   d <- length(nabor)
