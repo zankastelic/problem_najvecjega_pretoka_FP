@@ -28,7 +28,7 @@ tabela_istih_utezi <- function(max_st_tock, max_utez){ #ta funkcija naredi tabel
 tabela <- tabela_istih_utezi(5,5)
 
 
-test_tabela_istih_utezi <- function(max_st_tock, max_utez){ #ta funkcija naredi tabelo kjer so v drugem stolpcu st tock, 3 stolp = utez =1, 4stolpec = utez=2
+ppretvori_samo_tabela_istih_utezi <- function(max_st_tock, max_utez){ #ta funkcija naredi tabelo kjer so v drugem stolpcu st tock, 3 stolp = utez =1, 4stolpec = utez=2
   st_tock <- 3:max_st_tock
   pretoki <- c()
   st= 1
@@ -47,7 +47,7 @@ test_tabela_istih_utezi <- function(max_st_tock, max_utez){ #ta funkcija naredi 
 }
 
 #primerček za zgornjo funkcijo 
-test_tabela_1 <- test_tabela_istih_utezi(10,3)
+test_tabela_1 <- ppretvori_samo_tabela_istih_utezi(10,3)
 p1 <- ggplot(test_tabela_1, aes(x=utezi, y=pretok, colour=tocke, group=tocke)) + 
   geom_line()
 p1
@@ -109,41 +109,6 @@ tabela_odstrani_minpov <- function(max_st_tock,a,b){
   st_tock <- max_st_tock
   pretoki <- c()
   g <- pretvorba_v_igraph(generira_matriko(st_tock,a,b))
-  pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
-  tab_odstrani_min <- data.frame()
-  dolzina <- 0
-  while (st_tock > 3) {
-    while (pretoki[length(pretoki)] != 0 ) {
-      min <- min(E(g)$V3)
-      mesto <- which(E(g)$V3== min)[1]
-      g <- delete.edges(g,E(g)[mesto])
-      pretoki <- append(pretoki, edmonds_karp(g, 1, st_tock))
-    }
-    if (length(pretoki) > dolzina){
-      dolzina <- length(pretoki)
-    }else {
-      u <- length(pretoki)
-      pretoki <- c(pretoki, rep(0, dolzina - u))}
-    tab_odstrani_min <- rbind(tab_odstrani_min, pretoki)
-    dolzina <- dim(tab_odstrani_min)[2]
-    st_tock <- st_tock - 1
-    g <- pretvorba_v_igraph(generira_matriko(st_tock,a,b))
-    pretoki <- c()
-    pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
-  }
-  tab_odstrani_min <- cbind('stevilo tock' = c(max_st_tock:4), tab_odstrani_min)
-  colnames(tab_odstrani_min)[2:(dolzina+1)] <- c(0:(dolzina-1))
-  return(tab_odstrani_min)
-}
-
-#### za primer če bi isti g hotla povsod vstavt: 
-g <- pretvorba_v_igraph(generira_matriko(10,0,20))
-
-test_tabela_odstrani_minpov <- function(g){
-  st_tock <- length(V(g))
-  a <- min(E(g)$V3)
-  b <- max(E(g)$V3)
-  pretoki <- c()
   pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
   tab_odstrani_min <- data.frame()
   dolzina <- 0
