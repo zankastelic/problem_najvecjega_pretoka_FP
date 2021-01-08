@@ -1,6 +1,7 @@
 #generianje podatkov in predstava v tabeli 
 library(ggplot2)
 library(reshape2)
+library(optrees)
 
 
 #1) gledamo navadane grafe,ki jih generirava s pomočjo matrike 
@@ -500,10 +501,23 @@ tabela_sprem_r_tip3 <- function(max_st_tock, max_utez){
 }
 
 
-#3) merjenje hitrosti funkcije ki izra?una pretok v primerjavi z ?e ugrajeno funkcijo. 
-system.time(edmonds_karp(igraf_razdalje_so_utezi(6,1),1,6)) #primer 
-#elapsed je koliko ?asa prete?e da izra?una funkcijo. 
+#3) merjenje hitrosti funkcije ki izra?una pretok v primerjavi z ?e ugrajeno funkcijo.
 
-#ze ugrajene funkcije za pretok 
-#max_flow(graph, source, target, capacity = NULL)
-#maxFlowFordFulkerson(nodes, arcs, directed = FALSE, source.node = 1, sink.node = nodes[length(nodes)])
+hitrost_funkcij <- function(max_st_tock, max_utez){
+  tab_hitr <- data.frame()
+  speed <- c()
+  for (i in 2:max_st_tock){
+    mat <- generira_matriko(i, 0, max_utez)
+    g <- pretvorba_v_igraph(mat)
+    prvi <- system.time(edmonds_karp(g, 1, i))[3]
+    arcs <- oceti_in_sinovi(mat)
+    h <- maxFlowFordFulkerson(c(1:i), arcs, directed = TRUE, source.node = 1, sink.node = i)
+    drugi <- system.time(h)[3]
+    tab_hitr <- rbind(tab_hitr, c(prvi, drugi))
+    speed <- c()
+  }
+  tab_hitr <- cbind('st_tock' =c(3:(max_st_tock+1)), tab_hitr)
+  colnames(tab_hitr)[2:3] <- c('najina fun pretok', 'ugrajena fun')
+  return(tab_hitr)
+}
+
