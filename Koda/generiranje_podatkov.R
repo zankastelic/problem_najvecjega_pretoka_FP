@@ -51,7 +51,7 @@ test_tabela_1 <- test_tabela_istih_utezi(10,3)
 p1 <- ggplot(test_tabela_1, aes(x=utezi, y=pretok, colour=tocke, group=tocke)) + 
   geom_line()
 p1
-#################### ta zdej dela ###########################################
+
 
 #opazimo nek algoritem 
 alg_iste_utezi <- function(st_tock, max_utez){
@@ -103,6 +103,8 @@ p2
 #b) utezi povezav so iz intervala [a,b]  a < b, in odstranjujemo povezave 
 #odstranimo minimalno utež 
 
+
+
 tabela_odstrani_minpov <- function(max_st_tock,a,b){
   st_tock <- max_st_tock
   pretoki <- c()
@@ -134,56 +136,47 @@ tabela_odstrani_minpov <- function(max_st_tock,a,b){
   return(tab_odstrani_min)
 }
 
-#primer 
-#mini <-tabela_odstrani_minpov(10,0,20)
-test_tabela_odstrani_minpov <- function(max_st_tock,a,b){
-  st_tock <- max_st_tock
+#### za primer če bi isti g hotla povsod vstavt: 
+g <- pretvorba_v_igraph(generira_matriko(10,0,20))
+
+test_tabela_odstrani_minpov <- function(g){
+  st_tock <- length(V(g))
+  a <- min(E(g)$V3)
+  b <- max(E(g)$V3)
   pretoki <- c()
-  g <- pretvorba_v_igraph(generira_matriko(st_tock,a,b))
   pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
-  stevilo_odstranjenih_povezav <- c(0)
+  tab_odstrani_min <- data.frame()
   dolzina <- 0
-  i <- 1
-  stevilo_tock <- c(st_tock)
-  while (st_tock > 1) {
-    while (pretoki[length(pretoki)] != 0 ) { #ali je zadnji pretok 0? 
-      min <- min(E(g)$V3)                    # najmanjša utež 
-      mesto <- which(E(g)$V3== min)[1]      # na katerem mestu je
-      g <- delete.edges(g,E(g)[mesto])       # odstranimo to povezavo s to utežjo
-      stevilo_odstranjenih_povezav <- append(stevilo_odstranjenih_povezav, i)
-      i <- i +1
-      pretoki <- append(pretoki, edmonds_karp(g, 1, st_tock)) # dodamo pretok ko odstranimo povezavo 
-      stevilo_tock <- append(stevilo_tock, st_tock)
+  while (st_tock > 3) {
+    while (pretoki[length(pretoki)] != 0 ) {
+      min <- min(E(g)$V3)
+      mesto <- which(E(g)$V3== min)[1]
+      g <- delete.edges(g,E(g)[mesto])
+      pretoki <- append(pretoki, edmonds_karp(g, 1, st_tock))
     }
     if (length(pretoki) > dolzina){
       dolzina <- length(pretoki)
     }else {
       u <- length(pretoki)
-      st_tock <- st_tock - 1
-      g <- pretvorba_v_igraph(generira_matriko(st_tock,a,b))
-      pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
-      i <- 0 
-      stevilo_odstranjenih_povezav <- append(stevilo_odstranjenih_povezav, i)
-      i <- 1 
-      stevilo_tock <- append(stevilo_tock, st_tock)
+      pretoki <- c(pretoki, rep(0, dolzina - u))}
+    tab_odstrani_min <- rbind(tab_odstrani_min, pretoki)
+    dolzina <- dim(tab_odstrani_min)[2]
+    st_tock <- st_tock - 1
+    g <- pretvorba_v_igraph(generira_matriko(st_tock,a,b))
+    pretoki <- c()
+    pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
   }
-  tab_odstrani_min <- data.frame('st_odstranjenih_povezav' = stevilo_odstranjenih_povezav,
-                                 'pretoki' = pretoki,
-                                 'stevilo_tock' = stevilo_tock)
-  #tab_odstrani_min <- tab_odstrani_min [-nrow(tab_odstrani_min ),]
- }
+  tab_odstrani_min <- cbind('stevilo tock' = c(max_st_tock:4), tab_odstrani_min)
+  colnames(tab_odstrani_min)[2:(dolzina+1)] <- c(0:(dolzina-1))
   return(tab_odstrani_min)
 }
 
+#primer 
+mini <-tabela_odstrani_minpov(10,0,20)
+#mini_test <- test_tabela_odstrani_minpov(g) 
 
-test_mini <-test_tabela_odstrani_minpov(5,0,10)
-p3 <- ggplot(test_mini, aes(x=utezi, y=pretoki, colour=stevilo_tock, 
-                                group=stevilo_tock)) + geom_point()
-p3
 
-# tale noče delat :( 
-
-ne_elegenten_nacin_tabela_odstrani_minpov <- function(tab_odstrani_min){
+pretvori_v_tabelo_za_graf <- function(tab_odstrani_min){
   st_odstr_povezav <- c(0)
   st_pov <- 1:(ncol(tab_odstrani_min) -2)
   st_odstr_povezav <- append(st_odstr_povezav, st_pov)
@@ -205,38 +198,16 @@ ne_elegenten_nacin_tabela_odstrani_minpov <- function(tab_odstrani_min){
                              'pretok' = pretok, 'stevilo_tock' = stevilo_tock)
   return(odstrani_min)
 }
-test_mini_ne_elegantno <-ne_elegenten_nacin_tabela_odstrani_minpov(tabela_odstrani_minpov(10,0,20))
-p4 <- ggplot(test_mini_ne_elegantno, aes(x=st_odstr_povezav, y=pretok, colour=stevilo_tock, 
-                            group=stevilo_tock)) + geom_line()
-p4
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
+za_graf_odstr_mini <-pretvori_v_tabelo_za_graf(mini)
+p3 <- ggplot(za_graf_odstr_mini, aes(x=st_odstr_povezav, y=pretok, colour=stevilo_tock, 
+                            group=stevilo_tock)) + geom_line() + ggtitle("Pretok grafa glede na število \n odstranjenih minimalnih povezav")
+p3
 
 
 
 #odstranimo maksimalno utez
 
-tabela_odstarni_maxpov <- function(max_st_tock,a,b){
+tabela_odstrani_maxpov <- function(max_st_tock,a,b){
   st_tock <- max_st_tock
   pretoki <- c()
   g <- pretvorba_v_igraph(generira_matriko(st_tock,a,b))
@@ -264,13 +235,28 @@ tabela_odstarni_maxpov <- function(max_st_tock,a,b){
     pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
     
   }
-  tab_odstrani_max <- cbind('stevilo tock' = c(4:max_st_tock), tab_odstrani_max)
+  tab_odstrani_max <- cbind('stevilo tock' = c(max_st_tock:4), tab_odstrani_max)
   colnames(tab_odstrani_max)[2:(dolzina+1)] <- c(1:(dolzina))
   return(tab_odstrani_max)
 }
 
+
 #primer 
-#maxi <-tabela_odstarni_maxpov(10,0,20)
+maxi <-tabela_odstrani_maxpov(10,0,20)
+za_graf_odstr_maxi <-pretvori_v_tabelo_za_graf(maxi)
+p4 <- ggplot(za_graf_odstr_maxi, aes(x=st_odstr_povezav, y=pretok, colour=stevilo_tock, 
+                                     group=stevilo_tock)) + geom_line() + ggtitle("Pretok grafa glede na število \n odstranjenih maximalnih povezav")
+p4
+
+
+############# do sm dela ##############################3
+
+
+
+
+
+
+
 
 #c) utezi povezav so iz intervala [a,b]  a < b, in odstranjujemo točke
 tabela_odstrani_tocke <- function(max_tock, a, b){
@@ -285,7 +271,6 @@ tabela_odstrani_tocke <- function(max_tock, a, b){
         k <- sample(2:(st_tock-1), size = i, replace=FALSE)
         h <- delete.vertices(g,k)
         pretoki <- append(pretoki, edmonds_karp(h,1,st_tock-i))
-    
       }
     pretoki <- append(pretoki, rep(0,dolzina))
     tab_odstrani_oglisce <- rbind(tab_odstrani_oglisce, pretoki)
@@ -295,13 +280,17 @@ tabela_odstrani_tocke <- function(max_tock, a, b){
     pretoki <- c()
     pretoki <- append(pretoki, edmonds_karp(g,1,st_tock))
   }
-  tab_odstrani_oglisce <- cbind('stevilo tock' = c(4:max_tock), tab_odstrani_oglisce)
+  tab_odstrani_oglisce <- cbind('stevilo tock' = c(max_tock:4), tab_odstrani_oglisce)
   dim <- dim(tab_odstrani_oglisce)[2]
-  colnames(tab_odstrani_oglisce)[2:(dim+1)] <- c(0:(dim -1))
+  #colnames(tab_odstrani_oglisce)[2:(dim+1)] <- c(0:(dim -1))
   return(tab_odstrani_oglisce)
 }
 
-
+odstrani_tocke <- tabela_odstrani_tocke(10,0,20)
+za_graf_odstr_tocke <-pretvori_v_tabelo_za_graf(odstrani_tocke)
+p5 <- ggplot(za_graf_odstr_tocke, aes(x=st_odstr_povezav, y=pretok, colour=stevilo_tock, 
+                                     group=stevilo_tock)) + geom_line() + ggtitle("Pretok grafa glede na število \n odstranjenih točk")
+p5
 
 #2) generiramo s pomočjo geometrijskih grafov vse 3 razlicne utezi so v eni funkciji, locimo jih glede na tip
 
@@ -343,11 +332,37 @@ tabela_odstrani_tocke_geom <- function(g, r, tip){
   }
   tab_odstrani_oglisce <- cbind('stevilo tock' = c(4:max_tock), tab_odstrani_oglisce)
   dim <- dim(tab_odstrani_oglisce)[2]
-  colnames(tab_odstrani_oglisce)[2:(dim+1)] <- c(0:(dim -1))
+  #colnames(tab_odstrani_oglisce)[2:(dim+1)] <- c(0:(dim -1))
   return(tab_odstrani_oglisce)
 }
 
-#b) odstrnimo minimalno povezavo
+#primer: 
+r <- 1
+g <- igraf_razdalje_so_utezi(10,r)
+#tip 1
+odst_ogli_1 <- tabela_odstrani_tocke_geom(g,r,1)
+za_graf_odstr_ogli_1<-pretvori_v_tabelo_za_graf(odst_ogli_1)
+p6_1 <- ggplot(za_graf_odstr_ogli_1, aes(x=st_odstr_povezav, y=pretok, colour=stevilo_tock, 
+                                      group=stevilo_tock)) + geom_line() + ggtitle("Pretok geometrijskega grafa glede na _____")
+p6_1
+
+#tip 2
+odst_ogli_2 <- tabela_odstrani_tocke_geom(g,r,2)
+za_graf_odstr_ogli_2<-pretvori_v_tabelo_za_graf(odst_ogli_2)
+p6_2 <- ggplot(za_graf_odstr_ogli_2, aes(x=st_odstr_povezav, y=pretok, colour=stevilo_tock, 
+                                         group=stevilo_tock)) + geom_line() + ggtitle("Pretok geometrijskega grafa glede na _____")
+p6_2
+
+#tip 3
+odst_ogli_3 <- tabela_odstrani_tocke_geom(g,r,3)
+za_graf_odstr_ogli_3 <-pretvori_v_tabelo_za_graf(odst_ogli_3)
+p6_3 <- ggplot(za_graf_odstr_ogli_3, aes(x=st_odstr_povezav, y=pretok, colour=stevilo_tock, 
+                                         group=stevilo_tock)) + geom_line() + ggtitle("Pretok geometrijskega grafa glede na _____")
+p6_3
+
+
+
+#b) odstranimo minimalno povezavo
 tabela_odstrani_minpov_geom <- function(g, r, tip){
   max_tock <- length(V(g))
   st_tock <- max_tock
@@ -390,9 +405,14 @@ tabela_odstrani_minpov_geom <- function(g, r, tip){
   return(tab_odstrani_min)
 }
 
-
 # primer 
-#g<- igraf_razdalje_so_inverz(6,1)
+g<- igraf_razdalje_so_inverz(10,1)
+odstrani_min_pov_geom <-tabela_odstrani_minpov_geom(g,0.5,1)
+za_graf_odstrani_min_pov_geom <-pretvori_v_tabelo_za_graf(odstrani_min_pov_geom)
+p7 <- ggplot(za_graf_odstrani_min_pov_geom, aes(x=st_odstr_povezav, y=pretok, colour=stevilo_tock, 
+                                         group=stevilo_tock)) + geom_line() + ggtitle("Pretok geometrijskega grafa glede na _____")
+p7
+
 #h <- igraf_razdalje_so_utezi(6,1)
 #i <- igraf_utezi_so_nakljucne(6,1,20)
 
@@ -459,6 +479,16 @@ tabela_sprem_r_tip1 <- function(max_st_tock){
   colnames(tab_r)[2:(d+1)] <- c(nabor)
   return(tab_r)
 }
+
+#primer
+k <- tabela_sprem_r_tip1(5)
+k1 <-pretvori_v_tabelo_za_graf(k)
+p8 <- ggplot(k1, aes(x=st_odstr_povezav, y=pretok, colour=stevilo_tock, 
+                     group=stevilo_tock)) + geom_line() + ggtitle("Pretok geometrijskega grafa glede na _____")
+p8
+
+
+
 
 #igraf_razdalje_so_inverz ---> tip 2 
 

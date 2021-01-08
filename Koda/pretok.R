@@ -226,9 +226,9 @@ edmonds_karp <- function(igraf, s, t) {
 
 
 #GEOMETRIJSKI GRAFI 
-#1) èe ima geometrijski graf take utezi kot je razdalja 
+#1) ?e ima geometrijski graf take utezi kot je razdalja 
 izracunaj_razdaljo <- function(x, y, matrika){ 
-  razdalja <- 0 # zaèetno razdaljo nastavimo na 0 
+  razdalja <- 0 # za?etno razdaljo nastavimo na 0 
   for(i in 1:(length(x)-1)){
     for (j in 2:length(x)) {
       #if (j>i){
@@ -241,7 +241,7 @@ izracunaj_razdaljo <- function(x, y, matrika){
 }
 
 najblizja_tocka_izhodisca <- function(x,y){
-  najmanjsa_razdalja <- 2 # najveèja je lah koren z 2 
+  najmanjsa_razdalja <- 2 # najve?ja je lah koren z 2 
   na_katerem_mestu_se_nahaja <- 0 
   for (i in 1:length(x)){
     razdalja_od_izhodisca <- sqrt((x[i]-0)^2 +(y[i]-0)^2)
@@ -257,7 +257,7 @@ najblizja_tocka_izhodisca <- function(x,y){
 
 
 najbolj_oddaljena_tocka_izhodisca <- function(x,y){
-  najvecja_razdalja <- 0 # najveèja je lah koren z 2 
+  najvecja_razdalja <- 0 # najve?ja je lah koren z 2 
   na_katerem_mestu_se_nahaja <- 0 
   for (i in 1:length(x)){
     razdalja_od_izhodisca <- sqrt((x[i]-0)^2 +(y[i]-0)^2)
@@ -271,8 +271,8 @@ najbolj_oddaljena_tocka_izhodisca <- function(x,y){
   return(na_katerem_mestu_se_nahaja)
 }
 
-
-igraf_razdalje_so_utezi <- function(st_tock,r){ #tuki dobimo matriko = matrika razdalj
+#tuki dobimo matriko = matrika razdalj
+igraf_razdalje_so_utezi <- function(st_tock,r){
   x <- runif(st_tock); # absica
   y <- runif(st_tock); # ordinata
   najblizja <- najblizja_tocka_izhodisca(x,y)
@@ -296,7 +296,7 @@ igraf_razdalje_so_utezi <- function(st_tock,r){ #tuki dobimo matriko = matrika r
   return(pretvorba_v_igraph(matrika))
 }
 
-#2) utez je inverz povezave (se pravi bližje sta toèki, veèja je utež)
+#2) utez je inverz povezave (se pravi bli?je sta to?ki, ve?ja je ute?)
 
 igraf_razdalje_so_inverz <- function(st_tock, r){
   graf <- igraf_razdalje_so_utezi(st_tock, r)
@@ -306,7 +306,7 @@ igraf_razdalje_so_inverz <- function(st_tock, r){
   return(graf)
 } 
 
-#3) utezi so na povezavah nakljuèno izbrane 
+#3) utezi so na povezavah naklju?no izbrane 
 
 igraf_utezi_so_nakljucne <- function(st_tock, r,max_stevilo){
   graf <- igraf_razdalje_so_utezi(st_tock, r)
