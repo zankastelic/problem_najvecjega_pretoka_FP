@@ -130,7 +130,7 @@ najvecji_pretok <- function(matrika){
     if ((sum(matrika[,ncol(matrika)]) <= 0)){
       return(max_pretok)
     }
-    utezi_poti <- utezi_na_poti(matrika)  # tle se prtož pr zadnjem koraku k matriko ustav (ampak zdej k je ta IF se ne bi smel)
+    utezi_poti <- utezi_na_poti(matrika)  
     vse_mozne_poti<- vse_poti(matrika)
     stevec <- length(utezi_poti)
   

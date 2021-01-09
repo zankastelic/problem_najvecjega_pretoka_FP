@@ -1,0 +1,115 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[slovene]{babel}
+\usepackage{lmodern} 
+
+\usepackage{amsmath}  
+\usepackage{amsthm}  
+\usepackage{amssymb} 
+\usepackage{graphicx}
+
+\title{\textit{Problem največjega pretoka}}
+\author{Žan Kastelic, Lara Vidmar}
+\date{~december 2020}
+
+\begin{document}
+\begin{titlepage}
+ \maketitle
+
+\end{titlepage}
+
+\section{Opis problema}
+Pri problemu največjega pretoka imamo pretočno omrežje, po katerem teče tekočina. Omrežje vsebuje dve oblikovani vozlišči, $s $in $t$. Iščemo največji možen pretok med njima. Vozlišče $s$ se imenuje \textbf{izvor} in nima nobene vstopne povezave. Vozlišče $t$ pa \textbf{ponor} in nima nobene izstopne povezave.
+
+PODATKI: 
+\begin{itemize}
+\item Imamo usmerjen graf $G = (V, E)$ z v naprej oblikovanima vozliščema $s $ in $t.$ Pri tem je $V$ množica vozlišč in $E$ množica povezav v grafu.
+\item Na vsaki povezavi $(v_i, v_j) \in E$ imamo nenegativno realno število $c_{ij}$ tj. prepustnost ali kapaciteta povezave $(v_i, v_j).$ Prepustnost $c_{ij}$ lahko razširimo na vse pare vozlišč:  $c(i, j) = \begin{cases} c_{ij}, & \mbox{če }(v_i, v_j)\mbox{$ \in$ E} \\ 0, & \mbox{če }(v_i, v_j)\mbox{ $\not\in$ E} \end{cases}$
+\item Urejeno četvorko (G, s, t, c) imenujemo \textbf{pretočno omrežje.}
+\end{itemize}
+
+Pri zgornjih podatkih iščemo največji pretok, ki je preslikava $f: V \times V \rightarrow \mathbb{R}.$ $f(i,j) < 0$, pomeni tok $|f(i,j)|$ od j proti i. Pri tem mora bit zadoščeno naslednjim pogojem. 
+\begin{itemize}
+\item \textit{Ustreznost pretoka}:  $f(i, j) \le c(i, j) $ za $\forall i, j \in V$
+\item \textit{Antisimetričnost pretoka}: $f(i, j) = - f(i, j)$ za vse $i, j \in V$
+\item \textit{Kirchhoffovi zakoni}: $\sum i \in V f(i, j) = 0 $ za vse $j \in V \setminus  \left \{ s, t \right \}$ 
+\end{itemize}
+Velja $f(i, j) = - f(i,j) = 0. $
+Če je $f$ pretok, je povezava $(v_i, v_j) \in E$ \textbf{zasičena,} če velja $f(i,j) = c(i,j).$ Oziramo \textbf{nenasičena}, če je $f(i,j) < c(i,j).$ 
+
+\textbf{Velikost pretoka f} je $$|f|= \sum_{i \in V} f(i,t). $$
+
+
+\section{Načrt dela}
+
+Najinega projekta se bova lotila v programu R. Kot prvo bova implementirala algoritem za iskanje največjega pretoka v acikličnem povezanem grafu. Pomagala si  bova z Edmonds-Kamp algoritmom. Algoritem prvo poišče poti od izvora s do ponora t, z uporabo iskanja v širino, potem pa s  Ford-Falkersonovega algoritmom poišče največji pretok. Midva bova napisala algoritem, ki bo prvo izpisal vse poti, potem pa bova gledala minimum prepustnosti določene poti. Kot sva ugotovila obstaja v programu R že vgrajena funkcija za iskanje največjega pretoka tj. maxFlowFordFulkerson. Poiskušala bova primerjat algoritma in ugotoviti kateri je bolj učinkovit. 
+
+Grafe bova implementirala s pomočjo matrike sosednosti, kjer bodo prepustnosti izbrane naključno iz že v naprej podanega intervala celih števil. Če utež ne bo enaka 0, potem bo ta povezava obstajala. Za lažjo predstavo bo funkcija graf tudi narisala. 
+
+Kot drugo bova poizkušala graf implementirati s pomočjo naključnih geometrijskih grafov. Kjer bo neka povezava obstajala, če bo njena povezava manjša ali enaka od nekega števila r. Tem povezavam bova določila smer in nato še naključne uteži.
+
+Eksperimente bova delala na zgoraj definiranih grafih, ki jim bova odstarnila eno ali več vozlišč, odstranila povezave, zamenjala smer povezave. Opazovala bova kako se pretok spreminja in poiskušala iz tega dobiti kakšno lastnost oz. bova opisala opažanja. 
+
+\section{Opis programa}
+
+Kot prvo sva generirala matriko, v kateri so generirani podatki grafa. Pri tem so elementi matrike utezi, ki so naključne. Kombinacija vrstice in stolpca pa predstavlja povezavo (na primer (vrstica 4, stolpec 6) pomeni povezava iz oglišča 4 v 6). Ker pri iskanju pretoka potrebujeva acikličen graf, so v matriki v prvem stolpcu, v zadnji vrstici in na diagonali same ničle. Iz nje sva potem generirala graf. Da bi lahko napisala funkcijo, ki bo iskala največji pretok, sva potrebovala tabelo, v kateri bodo v prvem stolpcu vstopna vozlišča povezave, v drugem izstopna vozlišča povezave, v tretjem pa utezi. To sva naredila v funkciji $\text{oceti\_in\_sinovi}$. Najvecji pretok sva poiskala tako, da sva locirala pot od izvora (vozlišče 1) do ponora (vozlišče z največjo številko) in skoz njo spustila največi možen pretok. Potem sva matriko posodobila, tako da sva ostranila povezave z ničelno utežjo in postopek ponovila. Kot sva ugotovila, je ta algoritem delal zelo počasi in je izračunal pretok za grafe do 7 vozlišč. 
+
+Zato sva generirala nov algoritem za iskanje pretoka, pri tem sva si pomagala psevdokodo Edmonds Kamp algoritma, kot je prikazana na sliki \ref{fig1}. 
+
+
+\begin{figure}[h]
+\centerline{\includegraphics[scale=.5]{edmondkarp.PNG}}
+\caption{Psevdokoda Edmond karp algoritma}
+\label{fig1}
+\end{figure}
+
+Kot prvo sva spremenila najino matriko v igraph, kateri je veliko bolj učinkovit. Napisala sva algoritem $\text{pregled\_v\_sirino}$, ki išče poti od izvora do ponora. S pomočjo tega pa sva napisala $\text{edmonds\_karp}$ algoritem. Pri tem sva za odstranjevanje povezav in lociranje minimalnih utezi uporabljala ugrajene funkcije od igrapha. 
+
+Kot sva že napovedala v načrtu dela, sva generirala geometrijske grafe. Razdelila sva jih na tri tipe in sicer, geometrijski grafi, ki imajo za utezi kar razdalje med točkami, potem grafe, ki imajo za utezi inverz razdalj in še zadnje, ki imajo naključne uteži.  Pri tem sva morala bit previdna, da je točka ki je najbližje izhodišču markirana z 1 in tista, ki je najdlje je označena s številom točk. Velikost grafa je odvisna od števila $r$, ki predstavlja razdaljo med točkami. Večji kot je $r$ več povezav bo v grafu. 
+
+
+\section{Generiranje podatkov}
+Podatke sva generirala prvo za navadne grafe, ki sva jih pridobila iz matrike, potem pa še za geometrijske grafe. Pogledala sva kako se pretok spreminja, če odstranimo povezavo, ki ima minimalno utež in kako, če odstranimo povezavo z maksimalno utežjo. Potem pa še kako se spremeninja pretok če odstraniva naključno točko, ki ni izvor oziroma ponor. Funkcije sva generirala tako, da nama vrne tabelo, ki prikazuje pretok, kjer so  vrstice vrednosti za različno število točk, v stolpcih pa koliko povezav oz. koliko toč sva odstranila. Pri navadnih grafih sva gledala, kaj se dogaja s pretokom če so vse uteži enake. Le pri tem sva ugotovila nek algoritem, katerega sva tudi napisala. 
+
+Pri geometrijskih grafih sva funkcije generirala na podoben način. Pri funkcijah, ki odstranjujejo povezave in točke, sva vse vrste geometrijskih grafov združila v eno funkcijo. In sicer tako, da sva v argument dodala tudi $tip$, kateri predstavlja vrsto geometrijskega grafa, tj. $\text{igraf\_razdalje\_so\_utezi}$ pri tem napišemo $tip = 1$, $\text{igraf\_razdalje\_so\_inverz}$ je $tip = 2$ in še $\text{igraf\_utezi\_so\_nakljucne}$, ki je $tip = 3.$
+
+Ker so geometrijski grafi zelo odvisni od razdalje r, naju je zanimalo tudi kako se spreminja pretok, če spreminjava r. 
+
+\section{Opis in razlaga eksperimentov}
+
+Eksperimente sva delala na grafih z 10 točkami in gledala njihov pretok. Podatke bova predstavila v grafih, saj so tako najbolj razvidne spremembe. Ker večina grafov generirava naključno, je pretok veliko odvisen tudi od naklučja uteži in povezav. 
+
+ 
+$\bullet $  Na grafu \ref{fig2} je razvidno, da pri grafih, kjer imajo vse povezave iste uteži, se pretok povečuje linearno s večanjem uteži in večanjem število točk. 
+\begin{figure}[h]
+\centerline{\includegraphics[scale=.5]{p1.PNG}}
+\caption{Pretok na grafih z enakimi utežmi.}
+\label{fig2}
+\end{figure}
+
+
+$\bullet $ Na grafu \ref{fig3} je prikazano spreminjanja pretoka, če grafu odstranjujemo povezavo z minimalno utežjo. Kot pričakovano je pretok vsakič manjši.  
+
+\begin{figure}[h]
+\centerline{\includegraphics[scale=.5]{p3.PNG}}
+\caption{Pretok na grafih z naključnimi utežmi, odstranimo povezavo z min. utežjo. }
+\label{fig3}
+\end{figure}
+
+$\bullet $ Na grafu \ref{fig4} je prikazano kako se pretok spreminja, če grafu odstranjujemo povezavo z največjo utežjo. Graf je podoben zgornjemu, le da se pri tem pretok veliko hitreje manjša v primerjavi z zgornjim grafom. 
+\begin{figure}[h]
+\centerline{\includegraphics[scale=.5]{p4.PNG}}
+\caption{Pretok na grafih z naključnimi utežmi, odstranimo povezavo z max. utežjo. }
+\label{fig4}
+\end{figure}
+
+$\bullet $ Na grafu \ref{fig5} je prikazano spreminjanja pretoka, če odtranjujemo točke. Vsak korak odtstranimo eno točko več. Ta graf je veliko bolj linearen od zgornjih dveh, saj z odstranitvijo ene točke,lahko odstranimo veliko več kot samo eno povezavo. 
+\begin{figure}[h]
+\centerline{\includegraphics[scale=.5]{p5.PNG}}
+\caption{Pretok na grafih z naključnimi utežmi, odstranimo naključne točke.}
+\label{fig5}
+\end{figure}
+
+
+\end{document}
