@@ -1,0 +1,9 @@
+\babel@toc {slovene}{}
+\contentsline {section}{\numberline {1}Opis problema}{3}%
+\contentsline {section}{\numberline {2}Načrt dela}{3}%
+\contentsline {section}{\numberline {3}Opis programa}{4}%
+\contentsline {section}{\numberline {4}Generiranje podatkov}{5}%
+\contentsline {section}{\numberline {5}Opis in razlaga eksperimentov}{5}%
+\contentsline {subsection}{\numberline {5.1}Grafi generirani s pomočjo matrike.}{6}%
+\contentsline {subsection}{\numberline {5.2}Geometrijski grafi}{8}%
+\contentsline {subsection}{\numberline {5.3}Hitrost funkcij}{15}%
