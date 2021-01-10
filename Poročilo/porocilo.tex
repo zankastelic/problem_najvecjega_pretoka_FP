@@ -82,6 +82,8 @@ Ker so geometrijski grafi zelo odvisni od razdalje $r$, naju je zanimalo tudi ka
 Eksperimente sva delala na grafih z 10 točkami in gledala njihov pretok. Podatke bova predstavila v grafih, saj so tako najbolj razvidne spremembe. Ker večina grafov generirava naključno, je pretok veliko odvisen tudi od naklučja uteži in povezav. 
 
 \pagebreak
+\subsection{Grafi generirani s pomočjo matrike.}
+
 $\bullet $  Na grafu \ref{fig2} je razvidno, da pri grafih, kjer imajo vse povezave iste uteži, se pretok povečuje linearno s večanjem uteži in večanjem število točk. 
 \begin{figure}[H]
 \centerline{\includegraphics[scale=.5]{p1.PNG}}
@@ -113,6 +115,116 @@ $\bullet $ Na grafu \ref{fig5} je prikazano spreminjanja pretoka, če odtranjuje
 \label{fig5}
 \end{figure}
 
+\subsection{Geometrijski grafi}
+Sledijo podatki za geometrijske grafe. Ločeni so glede na tipe utezi. \\
+
+$\rightarrow $ Geometrijski grafi, ki jim odstranjujemo točke. \\
+
+$\ast$ Na grafu \ref{fig6} je prikazan geometrijski graf, ki ima za uteži kar razdaljo med točkami. Kot vidimo pretok linearno pada. Vsakič ko odstranimo po eno točko več je pretok seveda manjši.
+
+\begin{figure}[H]
+\centerline{\includegraphics[scale=.5]{p6_1.PNG}}
+\caption{Pretok pri geometrijskem grafu ($tip = 1$), ki mu odstranjujemo točke.}
+\label{fig6}
+\end{figure}
+
+$\ast$  Na grafu \ref{fig7} je prikazan geometrijski graf, ki ima uteži inverz razdalj med točkami. Kar pomeni točki, ki sta bližje skupaj bosta imeli večjo utež, kot pa tisti, ki sta bolj oddaljeni. Če graf pogledamo brez nenadnih skokov v pretoku, kateri nastanek bova objasnila kasneje, je nekako podoben prejšnjemu. Le da je pri tem pretok veliko večji že od začetka. 
+
+\begin{figure}[H]
+\centerline{\includegraphics[scale=.5]{p6_2.PNG}}
+\caption{Pretok pri geometrijskem grafu ($tip = 2$), ki mu odstranjujemo točke.}
+\label{fig7}
+\end{figure}
+
+$\ast$  Na grafu \ref{fig8} je prikazan geometrijski graf, ki ima za uteži naključna cela števila do 10. Pri tem, poleg veliko večjega začetnega pretok, ki je posledica večjih uteži, ne opazimo razlike od zgornjih dveh. Pretok se z vsako odstranjeno točko manjša.
+
+\begin{figure}[H]
+\centerline{\includegraphics[scale=.5]{p6_3.PNG}}
+\caption{Pretok pri geometrijskem grafu ($tip = 3$), ki mu odstranjujemo točke.}
+\label{fig8}
+\end{figure}
+
+Lahko bi rekli, da je neglede na to kakšen geometrijski graf uzamemo, pretok padajoč glede na število odstranjenih točk. \\
+
+$\rightarrow $  Geometrijski grafi, ki jim odstranimo minimalno utež na povezavi. \\
+
+$\ast$ Na grafu \ref{fig9} je prikazan geometrijski graf, ki ima za uteži kar razdaljo med točkami. Odstranjujemo mu minimalno povezavo. Pretok je padajoč. Če povezava, ki je bila odstranjena ni bila na poti od izvora do ponora, bo seveda pretok ostal nespremenjen, zato je pri tem velikokrat ravna črta na določeni višini. Drugače pa se slej ko prej pretok približa ničli. 
+\begin{figure}[H]
+\centerline{\includegraphics[scale=.5]{p8.PNG}}
+\caption{Pretok pri geometrijskem grafu ($tip = 1$), ki mu odstranjujemo minimalno utež na povezavi.}
+\label{fig9}
+\end{figure}
+
+$\ast$ Na grafu \ref{fig10} je prikazan geometrijski graf, ki ima uteži inverz razdalj med točkami. Pri tem je zgodba podobna kot pri prejšnem, le da je tukaj pretok veliko večji, zaradi večjih uteži.
+\begin{figure}[H]
+\centerline{\includegraphics[scale=.5]{p7.PNG}}
+\caption{Pretok pri geometrijskem grafu ($tip = 2$), ki mu odstranjujemo minimalno utež na povezavi.}
+\label{fig10}
+\end{figure}
+
+$\ast$ Na grafu \ref{fig11} je prikazan geometrijski graf, ki ima za uteži naključna cela števila do 10. Tukaj je padanje veliko bolj konsistentno, to bi lahko pripisali bolj enakomerno razporejenim utežem v grafu. Saj ker generiramo graf z delimi števili do 10, je možnosti za različne uteži bolj malo. 
+\begin{figure}[H]
+\centerline{\includegraphics[scale=.5]{p9.PNG}}
+\caption{Pretok pri geometrijskem grafu ($tip = 3$), ki mu odstranjujemo minimalno utež na povezavi.}
+\label{fig11}
+\end{figure} 
+
+$\rightarrow $ Geometrijski grafi, ki jim odstranimo maksimalno utež na povezavi. \\
+
+$\ast$ Na grafu \ref{fig12} je prikazan geometrijski graf, ki ima za uteži kar razdaljo med točkami. Ke odstranimo maksimalno utež se pretok veliko hitreje pride do 0. 
+\begin{figure}[H]
+\centerline{\includegraphics[scale=.5]{p8_1.PNG}}
+\caption{Pretok pri geometrijskem grafu ($tip = 1$), ki mu odstranjujemo maksimalno utež na povezavi.}
+\label{fig12}
+\end{figure}
+
+$\ast$Na grafu \ref{fig13} je prikazan geometrijski graf, ki ima uteži inverz razdalj med točkami. Enako situacijo imamo tudi tukaj, le da štartamo iz večjega pretoka. Je pa padanje nekoliko počasnejše. To bi lahko pripisali temu, da so inverzi razdalj večji, se pravi so uteži večje. %to nevem če je res 
+\begin{figure}[H]
+\centerline{\includegraphics[scale=.5]{p7_1.PNG}}
+\caption{Pretok pri geometrijskem grafu ($tip = 2$), ki mu odstranjujemo maksimalno utež na povezavi.}
+\label{fig13}
+\end{figure}
+
+$\ast$ Na grafu \ref{fig14} je prikazan geometrijski graf, ki ima za uteži naključna cela števila do 10. Pretok je glede na pretekla grafa večji, vendar drugače pa podoben kot zgoraj.
+\begin{figure}[H]
+\centerline{\includegraphics[scale=.5]{p9_1.PNG}}
+\caption{Pretok pri geometrijskem grafu ($tip = 3$), ki mu odstranjujemo maksimalno utež na povezavi.}
+\label{fig14}
+\end{figure}  
+
+$\rightarrow$ Geometrijski grafi, glede na spreminjanje razdalje r. V grafu so tiste povezave katera razdalja je manjša od r. Gledamo kako se spreminja pretok ko r teče od $0.1$ do $\sqrt{2}$, z razmikom $0.1$.  \\
+
+
+$\ast$ Na grafu \ref{fig15} je prikazan geometrijski graf, ki ima za uteži kar razdaljo med točkami. Kot je ravidno je pri majhnem r-ju pretok v večini primerih enak 0, saj je takrat zelo malo povezav v grafu. Ko se r veča pa je seveda pretok večji. Največji pretok naj bi imel graf z desetimi točkami, najmanši pa z štirimi. Kot vidimo tukaj ni ravno tako, v grafu imamo veliko skokov, katero posledico bova opisala kasneje.
+\begin{figure}[H]
+\centerline{\includegraphics[scale=.6]{p10.PNG}}
+\caption{Pretok pri geometrijskem grafu ($tip = 1$), kjer spreminjamo r.}
+\label{fig15}
+\end{figure} 
+
+$\ast$ Na grafu \ref{fig15} je prikazan geometrijski graf, ki ima uteži inverz razdalj med točkami. Tukaj so skoki še bolj očitni, saj ima graf z naprimer 4 točkami pri $r = 0.3$ večji pretok, kot graf pri $r = 0.4.$ Vendar kljub temu lahko sklepamo, da se s povečevanje r-ja pretok veča. 
+\begin{figure}[H]
+\centerline{\includegraphics[scale=.6]{p11.PNG}}
+\caption{Pretok pri geometrijskem grafu ($tip = 2$), kjer spreminjamo r.}
+\label{fig15}
+\end{figure} 
+
+
+$\ast$  Na grafu \ref{fig16} je prikazan geometrijski graf, ki ima za uteži naključna cela števila do 10. Kot zgoraj je graf malo napačen, vendar je sklep isti. Graf z manj točkami imajo manjši pretok, kot grafi z več. Graf z isto številom toč ima pri manjšem r-ju majši pretok, kot pri velikem. 
+\begin{figure}[H]
+\centerline{\includegraphics[scale=.6]{p12.PNG}}
+\caption{Pretok pri geometrijskem grafu ($tip = 3$),  kjer spreminjamo r.}
+\label{fig16}
+\end{figure} 
+
+Če povzamemo vse skupaj, lahko vidimo da neglede kaj odstranimo ali so to točke ali povezave je pretok manjši, kot pričakovano. Razlika je le v tem kako hitro pride do ničelnega pretoka, seveda je to odvisno tudi od podameznega grafa. Pri spreminjanje razdalje med točkami pa je pri večjem r večji pretok. \\
+
+
+Naj omeniva še pomankljivost, ki sva jo opazila in je predvsem v grafih, kjer spreminjava r zelo očitna. Vemo da bi moral biti pretok pri grafu z 10 točkam, v večini primerih večji tok pretok pri grafu z manj točkami. Enako, če grafu odstranimo povezavo bo pretok enak oziroma manjši, kar pa pri nama ne drži nujno.  Kot opazimo pri najinih grafih se ponekod, grafi z manj točkami imajo večji pretok kot grafi z več točkami. Še najbolj očitno je to pri spreminjanju razdalje r. Kjer ima graf z večjim r manjši pretok, kot graf z majhnimr, kar pa ni logično. To je zato ker, sva narobe generirala podatke. Se pravi ko sva odstranila točko oziroma povezavo, sva graf ponovno zgenerirala seveda z manj točkami in povezavami vendar zopet naključno. Kar je pripeljalo do takih skokov v grafu. Bolj relavantno bi bilo gledat pretok enga grafa in temu odstranjevat točke oziroma povezave. Vendar kljub tej napaki lahko iz grafov vidimo kako se spreminja pretok ob spreminjanju različnih parametrov grafa. 
+
+\subsection{Hitrost funkcij}
+
+Kot opisano zgoraj, naju je zanimala tudi učinkovitost najine funkcije. Kot sva že takoj ugotovila, najina prva funkcija za pretok je neučinkovita.  Medtem ko je $\text{edmond\_karp}$ v primerjavi z vgrajeno funkcijo maxFlowFordFulkerson tudi bolj neučinkovit, kar je bilo tudi za pričakovati. V spodnji preglednici imava naveden čas v sekundah kako hitro je izračunal pretok pri različnem številu točk v grafu. Kot primerjava ima vgrajena funkcija 30  točkah hitrost $0.11$ sekunde. 
 \begin{center}
 \begin{tabular}{ |c|c|c|c| } 
 \hline

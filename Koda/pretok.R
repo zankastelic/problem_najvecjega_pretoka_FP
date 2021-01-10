@@ -26,7 +26,7 @@ graf <- function(matrika){
   for (i in 1:(st_tock-1)){ # zadnja vrstica je itak 0 pa jo lah spustimo 
     for (j in 2: (st_tock)){ # prvi stolpec je itak 0 pa ga lah spustimo 
       if (a[i,j] == 0){
-        st_tock <- st_tock + 0 # sam da neki nardi 
+        st_tock <- st_tock + 0  
       } else {
         vek_utezi <- append(vek_utezi, a[i,j])
         vek_povezav <- append(vek_povezav, c(i,j))
@@ -40,14 +40,12 @@ graf <- function(matrika){
 #naredi matriko, kjer so navedene povezave oče sin in v tretjem stolpcu uteži 
 oceti_in_sinovi <- function(matrika){
   zacetna_tocka <- 1
-  # sinovi <- list()
   koncna_tocka <- nrow(matrika)
   stevilo_vrstic <- koncna_tocka - 1 + (koncna_tocka - 2)*(koncna_tocka-2)
   matrika_oce_sin <- matrix(0,stevilo_vrstic,3)
   vrstica <- 1
   for (i in 1:koncna_tocka) {
     for (j in 1: koncna_tocka){
-      # sinovi[[i]] <- generira_matriko[i,]
       if (matrika[i,j] != 0){
         matrika_oce_sin[vrstica,1] <- i
         matrika_oce_sin[vrstica,2] <- j
@@ -57,7 +55,7 @@ oceti_in_sinovi <- function(matrika){
     }
   }
   matrika_oce_sin<- matrika_oce_sin[apply(matrika_oce_sin, 1, function(x) !all(x==0)),] #odstrani vrstice kjer so ničle 
-  return(matrix(matrika_oce_sin, ncol=3)) # dodano
+  return(matrix(matrika_oce_sin, ncol=3))
 }
 
 vse_poti <- function(matrika){
@@ -76,12 +74,8 @@ utezi_na_poti <- function(matrika){
   poti <- vse_poti(matrika)
   mat_oce_sin <- oceti_in_sinovi(matrika)
   mat_oce_sin_2 <- as.data.frame(mat_oce_sin[, -3])
-  #doloci utezi od poti
   utezi_poti <- list()
   utezi <- c()
-  #if (sum(matrika[1,])== 0){
-  #  stop("nimam več izhodov")
-  #}
   for (i in 1:length(poti)){
     pot <- as.vector(poti[[i]])
     for (j in (1:(length(pot)-1))){
@@ -99,7 +93,7 @@ utezi_na_poti <- function(matrika){
 
 posodobljena_generirana_matrika <- function(a,polozaj_minimuma,minimum_na_poti, vse_mozne_poti,i){
   izbrana_pot <- as.vector(vse_mozne_poti[[i]])
-  for (j in 1:(length(izbrana_pot)-1)){ # treba bo z indeksi 
+  for (j in 1:(length(izbrana_pot)-1)){  
     zacetek_delne_poti <- izbrana_pot[j]
     konec_delne_poti <- izbrana_pot[j+1]
     a[zacetek_delne_poti, konec_delne_poti] <- a[zacetek_delne_poti, konec_delne_poti] - minimum_na_poti
@@ -122,7 +116,6 @@ najvecji_pretok <- function(matrika){
     minimum_na_poti <- min(v) # minimum utezi na tej poti
     max_pretok <- max_pretok + minimum_na_poti # pretok povečamo za to utež
     polozaj_minimuma <- which(v == minimum_na_poti)[1] # indeks na katerem mestu je minimum v utezeh 
-    #mat_oce_sin <- posodobi_mat_oce_sin(mat_oce_sin, mat_oce_sin_2, minimum_na_poti,vse_mozne_poti,1)   ---> ne dela glih najbl
     matrika <- posodobljena_generirana_matrika(matrika,polozaj_minimuma,minimum_na_poti, vse_mozne_poti,1)
     if (sum(matrika[1,]) <= 0){
       return(max_pretok)
@@ -183,8 +176,6 @@ pregled_v_sirino <- function(graf, s, t) {
 edmonds_karp <- function(igraf, s, t) {
   bfs <- pregled_v_sirino(igraf, s, t)
   pretok <- 0
-  #povezave <- get.edges(igraf, c(1:gsize(igraf)))
-  #utezi <- E(igraf)$V3
   
   while (bfs$obstaja) {
     starsi_drugace <- rep(bfs$pot, each=2)[-1]
@@ -202,26 +193,6 @@ edmonds_karp <- function(igraf, s, t) {
   
   
 }
-
-#g <- make_ring(10) %>%
-#set_edge_attr("name", value = LETTERS[1:10])
-#edge_attr_names(g)
-#g2 <- delete_edge_attr(g, "name")
-#edge_attr_names(g2)
-#a <- generira_matriko(5,0,5)
-#graf(a)
-#b <- pretvorba_v_igraph(a)
-# b <- b - edge("c|d") tko odstranimo povezavo
-#E(b)$V3[1] <- E(b)$V3[1] -2 #tko zbrišeš utež 
-# E(b)$V3
-#E(b)$V3[get.edge.ids(b, c(1,2,2,5))] dobimo vektor utezi pozi
-# gsize(g) ---> število povezav v grafu
-# edge_attr(g) ---> uteži na povezavah
-# get.edges(g,c(1:6)) ---> matrika povezav (oče-sin)
-#b <- pretvorba_v_igraph(generira_matriko(7,0,5))
-#c <- pretvorba_v_igraph(generira_matriko(5,0,10))
-#d <- pretvorba_v_igraph(generira_matriko(9,0,8))
-#get.shortes.paths(d,s,t)
 
 
 
@@ -276,11 +247,11 @@ igraf_razdalje_so_utezi <- function(st_tock,r){
   x <- runif(st_tock); # absica
   y <- runif(st_tock); # ordinata
   najblizja <- najblizja_tocka_izhodisca(x,y)
-  x <- c(x[najblizja], x[-najblizja]) # dodano
-  y <- c(y[najblizja], y[-najblizja]) # dodano
+  x <- c(x[najblizja], x[-najblizja]) 
+  y <- c(y[najblizja], y[-najblizja])
   najbolj_oddaljena <- najbolj_oddaljena_tocka_izhodisca(x,y)
-  x <- c(x[-najbolj_oddaljena], x[najbolj_oddaljena]) # dodano
-  y <- c(y[-najbolj_oddaljena], y[najbolj_oddaljena]) # dodano
+  x <- c(x[-najbolj_oddaljena], x[najbolj_oddaljena]) 
+  y <- c(y[-najbolj_oddaljena], y[najbolj_oddaljena])
   nicelna_matrika <- matrix(0,st_tock,st_tock); 
   matrika <- izracunaj_razdaljo(x,y,nicelna_matrika)
   for (i in 1:nrow(matrika)){

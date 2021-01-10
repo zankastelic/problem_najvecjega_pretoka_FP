@@ -25,7 +25,6 @@ tabela_istih_utezi <- function(max_st_tock, max_utez){ #ta funkcija naredi tabel
   colnames(tabela_1)[2:(max_utez+1)] <- c(1:(max_utez))
   return(tabela_1)
 }
-# <- tabela_istih_utezi(5,5)
 
 
 ppretvori_samo_tabela_istih_utezi <- function(max_st_tock, max_utez){ #ta funkcija naredi tabelo kjer so v drugem stolpcu st tock, 3 stolp = utez =1, 4stolpec = utez=2
@@ -46,7 +45,7 @@ ppretvori_samo_tabela_istih_utezi <- function(max_st_tock, max_utez){ #ta funkci
   return(tabela_1)
 }
 
-#primerček za zgornjo funkcijo 
+#primer
 #test_tabela_1 <- ppretvori_samo_tabela_istih_utezi(10,3)
 #p1 <- ggplot(test_tabela_1, aes(x=utezi, y=pretok, colour=tocke, group=tocke)) + 
 #  geom_line() +ggtitle('Pretok pri grafih z enakimi utezmi')
@@ -73,7 +72,6 @@ alg_iste_utezi <- function(st_tock, max_utez){
 }
 
 
-#?????
 test_alg_iste_utezi <- function(st_tock, max_utez){
   zac_tock <- 2
   pretok <- c()
@@ -90,6 +88,7 @@ test_alg_iste_utezi <- function(st_tock, max_utez){
   return(tab_iste_utezi)
 }
 
+#primer
 #test_tabela_2 <- test_alg_iste_utezi(5,20)
 #p2 <- ggplot(test_tabela_2, aes(x=utezi, y=pretok, colour=tocke, group=tocke)) + 
 #  geom_line()
@@ -135,10 +134,6 @@ tabela_odstrani_minpov <- function(max_st_tock,a,b){
   return(tab_odstrani_min)
 }
 
-#primer 
-#mini <-tabela_odstrani_minpov(10,0,20)
-
-
 
 pretvori_v_tabelo_za_graf <- function(tab_odstrani_min){
   st_odstr_povezav <- c(0)
@@ -162,6 +157,8 @@ pretvori_v_tabelo_za_graf <- function(tab_odstrani_min){
                              'pretok' = pretok, 'stevilo_tock' = stevilo_tock)
   return(odstrani_min)
 }
+
+#primer
 #za_graf_odstr_mini <-pretvori_v_tabelo_za_graf(mini)
 #p3 <- ggplot(za_graf_odstr_mini, aes(x=st_odstr_povezav, y=pretok, colour=stevilo_tock, 
 #                            group=stevilo_tock)) + geom_line() + ggtitle("Pretok grafa glede na stevilo \n odstranjenih minimalnih povezav")
@@ -238,15 +235,18 @@ tabela_odstrani_tocke <- function(max_tock, a, b){
   }
   tab_odstrani_oglisce <- cbind('stevilo tock' = c(max_tock:4), tab_odstrani_oglisce)
   dim <- dim(tab_odstrani_oglisce)[2]
-  #colnames(tab_odstrani_oglisce)[2:(dim+1)] <- c(0:(dim -1))
   return(tab_odstrani_oglisce)
 }
 
+
+#primer
 #odstrani_tocke <- tabela_odstrani_tocke(10,0,20)
 #za_graf_odstr_tocke <-pretvori_v_tabelo_za_graf(odstrani_tocke)
 #p5 <- ggplot(za_graf_odstr_tocke, aes(x=st_odstr_povezav, y=pretok, colour=stevilo_tock, 
 #                                     group=stevilo_tock)) + geom_line() + xlab('st_odstranjenih_tock')  + ggtitle("Pretok grafa glede na stevilo \n odstranjenih tock")
 #p5
+
+
 
 #2) generiramo s pomočjo geometrijskih grafov vse 3 razlicne utezi so v eni funkciji, locimo jih glede na tip
 
@@ -278,7 +278,7 @@ tabela_odstrani_tocke_geom <- function(g, r, tip){
     }else if (tip == 2){
       igraf_razdalje_so_inverz(st_tock,r)
     }else if (tip == 3){
-      igraf_utezi_so_nakljucne(st_tock,r,20) # bolj?eeee!!!!!
+      igraf_utezi_so_nakljucne(st_tock,r,20) 
     }else{
       return('napacen ukaz')
     }
@@ -288,7 +288,6 @@ tabela_odstrani_tocke_geom <- function(g, r, tip){
   }
   tab_odstrani_oglisce <- cbind('stevilo tock' = c(max_tock:4), tab_odstrani_oglisce)
   dim <- dim(tab_odstrani_oglisce)[2]
-  #colnames(tab_odstrani_oglisce)[2:(dim+1)] <- c(0:(dim -1))
   return(tab_odstrani_oglisce)
 }
 
@@ -349,7 +348,7 @@ tabela_odstrani_minpov_geom <- function(g, r, tip){
     }else if (tip == 2){
       g <- igraf_razdalje_so_inverz(st_tock,r)
     }else if (tip == 3){
-      g <- igraf_utezi_so_nakljucne(st_tock,r,20) # bolj?eeee!!!!!
+      g <- igraf_utezi_so_nakljucne(st_tock,r,20) 
     }else{
       return('napacen ukaz')
     }
@@ -417,7 +416,7 @@ tabela_odstrani_maxpov_geom <- function(g, r, tip){
     }else if (tip == 2){
       g <- igraf_razdalje_so_inverz(st_tock,r)
     }else if (tip == 3){
-      g <- igraf_utezi_so_nakljucne(st_tock,r,20) # bolj?eeee!!!!!
+      g <- igraf_utezi_so_nakljucne(st_tock,r,20) 
     }else{
       return('napacen ukaz')
     }
@@ -562,6 +561,7 @@ tabela_sprem_r_tip3 <- function(max_st_tock, max_utez){
   return(tab_r)
 }
 
+#primer
 #r_tip_3 <- tabela_sprem_r_tip3(10,10)
 #r_tip_3_1 <-pretvori_v_tabelo_za_graf_r(r_tip_3)
 #p12 <- ggplot(r_tip_3_1, aes(x=r, y=pretok, colour=stevilo_tock, 
@@ -580,8 +580,7 @@ hitrost_funkcij <- function(max_st_tock, max_utez){
     g <- pretvorba_v_igraph(mat)
     prvi <- system.time(edmonds_karp(g, 1, i))[3]
     arcs <- oceti_in_sinovi(mat)
-    h <- maxFlowFordFulkerson(c(1:i), arcs, directed = TRUE, source.node = 1, sink.node = i)
-    drugi <- system.time(h)[3]
+    drugi <- system.time(maxFlowFordFulkerson(c(1:i), arcs, directed = TRUE, source.node = 1, sink.node = i))[3]
     tab_hitr <- rbind(tab_hitr, c(prvi, drugi))
     speed <- c()
   }
@@ -590,4 +589,5 @@ hitrost_funkcij <- function(max_st_tock, max_utez){
   return(tab_hitr)
 }
 
+#primer
 #hitrost_funkcij(10,10)
